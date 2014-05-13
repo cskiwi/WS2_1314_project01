@@ -1,0 +1,20 @@
+{% extends 'layout.twig' %}
+
+{% set pageTitle = 'Detail' %}
+{% set subTitle = 'Detail' %}
+
+{% block content %}
+ {{ tool.title }}
+{% endblock %}
+
+{% block SideNavigation %}
+    <li><a href="#"><i class="fa fa-user fa-fw"></i> {{ 'Contact %user%'|trans({'%user%': by.username}) }}</a></li>
+
+    {% if app.session.get('user')%}
+        <li><a href="#"><i class="fa fa-home fa-fw"></i> {{ 'Status:' |trans }} {{ tool.status }}</a></li>
+
+        {% if app.session.get('user').id == tool.user_id %}
+            <li><a href="#"><i class="fa fa-lock fa-fw"></i> {{ 'Delete' |trans }}</a></li>
+        {% endif %}
+    {% endif %}
+{% endblock %}

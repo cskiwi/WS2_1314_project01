@@ -1,0 +1,63 @@
+{% extends 'layout.twig' %}
+
+{% set pageTitle = 'Register' |trans %}
+{% set subTitle = 'Register' |trans %}
+
+{% block content %}
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Register' |trans }}</div>
+            <div class="panel-body">
+                <form action="{{ path('auth.register') }}" method="post" {{ form_enctype(registerForm) }} novalidate="novalidate">
+                    <!-- Token -->
+                    {{ form_widget(registerForm._token) }}
+
+                    <div class="form-group{% if not registerForm.username.vars.valid %}form-group has-error{% endif %}">
+                        {{ form_label(registerForm.username) }}
+                        {{ form_widget(registerForm.username) }}
+                        {% if not registerForm.username.vars.valid %}
+                            {% for error in registerForm.username.vars.errors %}
+                                <small>{{ error.message|trans|capitalize }}</small>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group{% if not registerForm.email.vars.valid %}form-group has-error{% endif %}">
+                        {{ form_label(registerForm.email) }}
+                        {{ form_widget(registerForm.email) }}
+                        {% if not registerForm.email.vars.valid %}
+                            {% for error in registerForm.email.vars.errors %}
+                                <small>{{ error.message|trans|capitalize }}</small>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group{% if not registerForm.password.vars.valid %}form-group has-error{% endif %}">
+                        {{ form_label(registerForm.password) }}
+                        {{ form_widget(registerForm.password) }}
+                        {% if not registerForm.password.vars.valid %}
+                            {% for error in registerForm.password.vars.errors %}
+                                <small>{{ error.message|trans|capitalize }}</small>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Button -->
+                    <div class="form-group">
+                        <button id="submit" name="submit" class="btn btn-info">{{ 'Login' | trans }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Login' | trans }}</div>
+            <div class="panel-body">
+                <p>{{ 'Already an account?' | trans }}</p>
+                <a class="btn btn-default" href="{{  path('auth.login') }}">{{ 'Login now!' | trans }}</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

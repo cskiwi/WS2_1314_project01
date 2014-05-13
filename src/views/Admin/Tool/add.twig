@@ -1,0 +1,179 @@
+{% extends 'layout.twig' %}
+
+{% set pageTitle = 'Add Tool' %}
+{% set subTitle = 'Add Tool' %}
+
+{% block content %}
+    <div class="container content">
+        <div class="row">
+            <div class="col-sm-9 col-md-9">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Add Tool</h3>
+                    </div>
+                    <div class="panel-body">
+                        {% if canAdd == false %}
+                            <div class="alert alert-danger">You have to have an address in order to add tools <br/> please add one in <a href="{{ path('admin.settings', {'type':'address'}) }}">address settings</a> </div>
+                        {% endif %}
+                        <form id="addToolForm" action="{{ path('admin.tool.add') }}" method="post" {{ form_enctype(addForm) }} novalidate="novalidate" dis>
+                            <!-- Token -->
+                            {{ form_widget(addForm._token) }}
+
+                            <!-- Text input-->
+                            <div class="form-group col-sm-12 {% if form_errors(addForm.title) %}has-error error {% endif %}">
+                                <div class="col-sm-3">
+                                    <label class="control-label ">{{ form_label(addForm.title) }}</label>
+                                </div>
+                                <div class="col-sm-9">
+
+                                    {{ form_widget(addForm.title) }}
+
+                                    {% if form_errors(addForm.title) %}
+                                        <span class="help-block text-danger">{{ form_errors(addForm.title) }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group  col-sm-12 {% if form_errors(addForm.content) %}has-error error {% endif %}">
+                                <div class="col-sm-3">
+                                    <label class="control-label">{{ form_label(addForm.content) }}</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    {{ form_widget(addForm.content) }}
+
+                                    {% if form_errors(addForm.content) %}
+                                        <span class="help-block text-danger">{{ form_errors(addForm.content) }}</span>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group  col-sm-12 {% if form_errors(addForm.price) %}has-error error {% endif %}">
+                                <div class="col-sm-3">
+                                    <label class="control-label">{{ form_label(addForm.price) }}</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    {{ form_widget(addForm.price) }}
+                                    <p class="help-block">Enter a price, you can enter 0 or leave blank if you want to offer it for free</p>
+
+                                    {% if form_errors(addForm.price) %}
+                                        <span class="help-block text-danger">{{ form_errors(addForm.price) }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="form-group  col-sm-12 {% if form_errors(addForm.image) %}has-error error {% endif %}">
+                                <div class="col-sm-3">
+                                    <label class="control-label">{{ form_label(addForm.image) }}</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    {{ form_widget(addForm.image) }}
+
+                                    {% if form_errors(addForm.image) %}
+                                        <span class="help-block text-danger">{{ form_errors(addForm.image) }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="form-group  col-sm-12 ">
+                                <div class="col-sm-3">
+                                    <label class="control-label">{{ form_label(addForm.tags) }}</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <ul class="tags" data-prototype="{{ form_widget(addForm.tags.vars.prototype)|e }}">
+
+                                        {% for tag in addForm.tags %}
+                                            <li class="tag {% if form_errors(tag) %}has-error error {% endif %}">
+                                                <div class="input-group">
+                                                    {{ form_widget(tag) }}
+                                                </div>
+                                                {% if form_errors(tag) %}
+                                                    <span class="help-block text-danger">{{ form_errors(tag) }}</span>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Button -->
+                            <div class="form-group col-sm-12 ">
+                                <div class="col-sm-3">
+                                    <button id="submit" name="submit" class="btn btn-info">Send</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ app.request.baseUrl }}/assets/tinymce/tinymce.min.js"></script>
+    <script>tinymce.init({
+            theme : 'modern',
+            skin: 'light',
+            selector:'textarea'
+        });</script>
+    <script>
+        var $collectionHolder;
+
+        // setup an "add a tag" link
+        var $addTagLink = $('<a href="#" class="add_tag_link">Add a tag</a>');
+        var $newLinkLi = $('<li/>').append($addTagLink);
+
+        jQuery(document).ready(function() {
+            $collectionHolder = $('ul.tags');
+            var nrOfTags = $collectionHolder.find(':input').length;
+
+            $collectionHolder.find('li.tag').each(function() {
+                addTagFormDeleteLink($(this));
+            });
+            $collectionHolder.append($newLinkLi);
+            $collectionHolder.data('index', nrOfTags);
+
+            $addTagLink.on('click', function(e) {
+                e.preventDefault();
+                addTagForm($collectionHolder, $newLinkLi);
+            });
+
+            if(nrOfTags == 0){
+                addTagForm($collectionHolder, $newLinkLi);
+            }
+
+            if ($('.tag > input:text').val().length == 0) {
+                console.log('empty');
+            }
+        });
+
+        function addTagForm($collectionHolder, $newLinkLi) {
+            var prototype = $collectionHolder.data('prototype');
+            var index = $collectionHolder.data('index');
+            var newForm = prototype.replace(/__name__/g, index);
+
+            $collectionHolder.data('index', index + 1);
+
+            var $newFormLi = $('<li class="tag input-group" />').append(newForm);
+            $newLinkLi.before($newFormLi);
+            addTagFormDeleteLink($newFormLi);
+        }
+
+        function addTagFormDeleteLink($tagFormLi) {
+            var $removeFormA = $('<a class="input-group-addon btn-danger delete-tag" href="#"><span class="fa fa-minus"></a>');
+            $tagFormLi.find(':input').after($removeFormA);
+
+            $removeFormA.on('click', function(e) {
+                e.preventDefault();
+                $tagFormLi.remove();
+            });
+        }
+        {% if canAdd == false %}
+        $("#addToolForm :input").attr("disabled", true);
+        {% endif %}
+
+    </script>
+{% endblock %}

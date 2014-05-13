@@ -1,0 +1,14 @@
+{% extends 'layout.twig' %}
+
+{% set pageTitle = 'Edit Tool' %}
+
+{% block content %}
+    <h1 class="page-header">{{ 'Welcome'|trans }} !</h1>
+    <p>{{ 'locale_lang'|trans}}</p>
+    <p><strong>Choose language:</strong>
+        {% for lang in languages %}
+            [ <a href="lang/{{ lang }}"> {{ lang }} </a> ]
+        {% endfor %}
+    </p>
+
+{% endblock %}

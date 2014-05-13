@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Rent my tool | {{ pageTitle }}</title>
+
+    <meta charset="UTF-8" />
+    <meta http-equiv="cleartype" content="on" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{{ app.request.baseUrl }}/assets/layout/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ app.request.baseUrl }}/assets/layout/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ app.request.baseUrl }}/assets/layout/css/layout.css">
+</head>
+<body>
+
+<div id="wrapper">
+
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+<div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="{{ path('index') }}">Rent my tool</a>
+
+</div>
+<!-- /.navbar-header -->
+
+<ul class="navbar-top-links">
+    <span class="nav navbar-left">
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="fa fa-globe fa-fw"></i> <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu">
+                {% for lang in languages %}
+                    <li><a href="{{ app.request.getBaseURL() }}/lang/{{ lang }}"> {{ lang }} </a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    </span>
+    <span class="nav navbar-right">
+        {% if app.session.get('user') %}
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-messages">
+                    <li>
+                        <a href="#">
+                            <div>
+                                <strong>John Smith</strong>
+                        <span class="pull-right text-muted">
+                            <em>Yesterday</em>
+                        </span>
+                            </div>
+                            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <strong>John Smith</strong>
+                        <span class="pull-right text-muted">
+                            <em>Yesterday</em>
+                        </span>
+                            </div>
+                            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <strong>John Smith</strong>
+                        <span class="pull-right text-muted">
+                            <em>Yesterday</em>
+                        </span>
+                            </div>
+                            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a class="text-center" href="#">
+                            <strong>Read All Messages</strong>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-alerts">
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-comment fa-fw"></i> New Comment
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                <span class="pull-right text-muted small">12 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-envelope fa-fw"></i> Message Sent
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-tasks fa-fw"></i> New Task
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a class="text-center" href="#">
+                            <strong>See All Alerts</strong>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- /.dropdown-alerts -->
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-tasks fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-tasks">
+                    <li>
+                        <a class="text-center" href="{{ path('admin.tool.add') }}">
+                            <strong>Add new tool</strong>
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </li>
+                    {% if app.session.get('tools') %}
+                        <li class="divider"></li>
+                        {% for tool in app.session.get('tools') %}
+                            <li><a href="{{ path('tool.detail',{ 'id' : tool.id}) }}">
+                                    <strong>{{ tool.title[:15]  }} {% if tool.title |length > 15 %}... {% endif %}</strong>
+                                    <span class="pull-right text-muted">Status: {{ tool.status }}</span>
+                                </a></li>
+                            <li class="divider"></li>
+                        {% endfor %}
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>See All Tools</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="divider"></li>
+                        <li>
+                            <div class="text-center">
+                                <p>You have no tools, add one quick!</p>
+                            </div>
+                        </li>
+                    {% endif %}
+                </ul>
+                <!-- /.dropdown-tasks -->
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    {# User is logged in: show nagivation #}
+                    <li><a href="{{ path('admin.overview') }}"><i class="fa fa-bars fa-fw"></i> {{ 'Dashboard' |trans }}</a></li>
+                    <li><a href="{{ path('user.profile') }}"><i class="fa fa-user fa-fw"></i> {{ 'User Profile' |trans }}</a></li>
+                    <li><a href="{{ path('admin.settings') }}"><i class="fa fa-gear fa-fw"></i> {{ 'Settings' |trans }}</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{{ path('auth.logout') }}"><i class="fa fa-sign-out fa-fw"></i> {{ 'Logout' |trans }}</a></li>
+                </ul>
+            </li>
+        {% else %}
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    {# User is logged in: show nagivation #}
+                    <li><a href="{{ path('auth.login') }}"><i class="fa fa-gear fa-fw"></i> {{ 'Login' |trans }}</a></li>
+                    <li><a href="{{ path('auth.register') }}"><i class="fa fa-plus fa-fw"></i> {{ 'Register' |trans }}</a></li>
+                </ul>
+            </li>
+
+        {% endif %}
+    </span>
+</ul>
+
+<div class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+            <li class="sidebar-search">
+                <form class="navbar-form" action="{{ path('tool.search') }}" method="get" role="search">
+                    <div class="input-group custom-search-form">
+                        <input type="text" class="  search-query form-control" placeholder="{{ 'Search' |trans }}..." name="q" {% if searchQuerry is defined %} value="{{ searchQuerry }}" {% endif %} />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </form>
+                <!-- /input-group -->
+            </li>
+            {% block SideNavigation %}
+            {% endblock %}
+
+
+        </ul>
+    </div>
+
+</div>
+
+</nav>
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">{{ subTitle }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+</div>
+
+
+<!-- Core Scripts - Include with every page -->
+<script src="{{ app.request.baseUrl }}/assets/layout/js/jquery-1.10.2.js"></script>
+<script src="{{ app.request.baseUrl }}/assets/layout/js/bootstrap.min.js"></script>
+<script src="{{ app.request.baseUrl }}/assets/layout/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+
+
+<!-- Include with every page -->
+<script src="{{ app.request.baseUrl }}/assets/layout/js/layout.js"></script>
+
+<!--  page specific includes-->
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

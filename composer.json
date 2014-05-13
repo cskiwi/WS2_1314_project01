@@ -1,0 +1,19 @@
+{
+    "require": {
+        "silex/silex": "~1.2",
+        "twig/twig": "1.*",
+        "doctrine/dbal": ">=2.1, <2.3",
+        "symfony/twig-bridge": "dev-master",
+        "symfony/form": "dev-master",
+        "symfony/validator": "dev-master",
+        "symfony/config": "dev-master",
+        "symfony/yaml": "dev-master",
+        "symfony/translation": "dev-master",
+        "knplabs/repository-service-provider": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "GlennLatomme": "src/"
+        }
+    }
+}

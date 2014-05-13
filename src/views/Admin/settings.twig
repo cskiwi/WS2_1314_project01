@@ -1,0 +1,15 @@
+{% extends 'layout.twig' %}
+
+{% set pageTitle = 'Settings' %}
+{% set subTitle = 'Settings'  %}
+
+{% block content %}
+    {{ type }}
+
+{% endblock %}
+
+{% block SideNavigation %}
+    <li><a href="{{ path('admin.settings', {type:'profile'}) }}"><i class="fa fa-user fa-fw"></i> {{ 'Profile' |trans }}</a></li>
+    <li><a href="{{ path('admin.settings', {type:'address'}) }}"><i class="fa fa-home fa-fw"></i> {{ 'Address' |trans }}</a></li>
+    <li><a href="{{ path('admin.settings', {type:'privacy'}) }}"><i class="fa fa-lock fa-fw"></i> {{ 'Privacy' |trans }}</a></li>
+{% endblock %}
