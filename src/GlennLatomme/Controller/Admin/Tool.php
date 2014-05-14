@@ -25,21 +25,36 @@ class Tool implements ControllerProviderInterface {
             ->method('GET|POST')
             ->bind('admin.tool.add');
 
+        // overview new toolpost
+        $controllers
+            ->match('/overview/', array($this, 'overview'))
+            ->method('GET')
+            ->bind('admin.tool.overview');
+
         // Update a toolpost
         $controllers
-            ->match('/edit/{toolpostId}/', array($this, 'edit'))
-            ->assert('toolpostId', '\d+')
+            ->match('/edit/{toolId}/', array($this, 'edit'))
+            ->assert('toolId', '\d+')
             ->method('GET|POST')
             ->bind('admin.tool.edit');
 
         // Delete a toolpost
         $controllers
-            ->post('/delete/{toolpostId}/', array($this, 'delete'))
-            ->assert('toolpostId', '\d+')
+            ->match('/delete/{toolId}/', array($this, 'delete'))
+            ->method('GET|POST')
+            ->assert('toolId', '\d+')
             ->bind('admin.tool.delete');
 
         return $controllers;
 
+    }
+    public function overview(Application $app){
+        $user = $app['session']->get('user');
+
+        $tools = $app['db.tools']->findAllForUser($user['id']);
+        return $app['twig']->render('Admin/Tool/overview.twig', array(
+            'tools' => $tools,
+        ));
     }
     public function add(Application $app){
         $user = $app['db.users']->find($app['session']->get('user')['id']);
@@ -57,7 +72,7 @@ class Tool implements ControllerProviderInterface {
             ->add('price', 'text', array(
                 'constraints' => array(new Assert\Range(array('min' => 0, 'max' => '500'))),
                 'attr' => array(
-                    'placeholder' => 'Enter a price',
+                    'placeholder' => 'Enter a price (or leave blank when free)',
                     'input_group' => array('prepend' => '@', 'size' => 'large')
                 ),
             ))
@@ -93,31 +108,44 @@ class Tool implements ControllerProviderInterface {
                 $data = $addForm->getData();
                 $files = $app['request']->files->get($addForm->getName());
 
-                $app['db.tools']->insert(array(
-                    'user_id'  => $user['id'],
-                    'title' =>  htmlentities($data['title']),
-                    'content' =>  $data['content'],
-                    'price' =>  $data['price']
-                ));
-
-                $id = $app['db.tools']->lastID();
-
-                foreach($data['tags'] as $tag){
-                    $app['db.keywords']->insertKey(htmlentities($tag), $id);
-                }
-
-
-                foreach ($files['images'] as $image){
-                    // Uploaded file must be `.jpg`!
-                    if (isset($image) && ('.jpg' == substr($image->getClientOriginalName(), -4))) {
-                        // Move it to its new location
-                        $image->move($app['rmt.base_path'] . $id, time().'-'. $image->getClientOriginalName());
-                    } else {
-                        $addForm->get('images')->addError(new \Symfony\Component\Form\FormError('Only .jpg allowed'));
+                // check if valid images
+                if (isset($files['images'][0])){
+                    foreach ($files['images'] as $image){
+                        // Uploaded file must be `.jpg`!
+                        if ('.jpg' != substr($image->getClientOriginalName(), -4)) {
+                            $addForm->get('images')->addError(new \Symfony\Component\Form\FormError('Only .jpg allowed'));
+                        }
                     }
                 }
 
-                return $app->redirect($app['url_generator']->generate('tool.detail', array('id' => $id)));
+                if ($addForm->getErrorsAsString() == null){
+
+                    // insert tool
+                    $app['db.tools']->insert(array(
+                        'user_id'  => $user['id'],
+                        'title' =>  htmlentities($data['title']),
+                        'content' =>  $data['content'],
+                        'price' =>  $data['price']
+                    ));
+
+                    // get iD
+                    $id = $app['db.tools']->lastID();
+
+                    // insert keywords
+                    foreach($data['tags'] as $tag){
+                        $app['db.keywords']->insertKey(htmlentities($tag), $id);
+                    }
+
+                    // copy images
+                    if (isset($files['images'][0])){
+                        foreach ($files['images'] as $image){
+                            $image->move($app['rmt.base_path'] . $id, time().'-'. $image->getClientOriginalName());
+                        }
+                    }
+
+                    // redirect
+                    return $app->redirect($app['url_generator']->generate('tool.detail', array('id' => $id)));
+                }
             }
         }
         return $app['twig']->render('Admin/Tool/add.twig', array(
@@ -128,15 +156,15 @@ class Tool implements ControllerProviderInterface {
 
     }
 
-    public function edit(Application $app, $toolpostId) {
+    public function edit(Application $app, $toolId) {
         // Fetch toolpost with given $toolPostId and logged in user Id
-        $toolpost = $app['db.tool']->findForAuthor($toolpostId, $app['session']->get('user')['id']);
+        $toolpost = $app['db.tools']->findForUser($toolId, $app['session']->get('user')['id']);
 
         // Redirect to overview if it does not exist
         if ($toolpost === false) {
             return $app->redirect($app['url_generator']->generate('admin.tool.overview'));
         }
-        $images = @scandir('files/'. $toolpostId);
+        $images = @scandir('files/'. $toolId);
         unset($images[0]); unset($images[1]);
 
         if(empty($images)) {
@@ -187,7 +215,7 @@ class Tool implements ControllerProviderInterface {
                     // Uploaded file must be `.jpg`!
                     if (isset($image) && ('.jpg' == substr($image->getClientOriginalName(), -4))) {
                         // Move it to its new location
-                        $image->move($app['cms.base_path'] . $toolpostId, time().'-'. $image->getClientOriginalName());
+                        $image->move($app['cms.base_path'] . $toolId, time().'-'. $image->getClientOriginalName());
                     } else {
                         $editform->get('images')->addError(new \Symfony\Component\Form\FormError('Only .jpg allowed'));
                     }
@@ -195,14 +223,14 @@ class Tool implements ControllerProviderInterface {
 
                 if(!empty($data['delete'])) {
                     foreach ($data['delete'] as $picture) {
-                        unlink('files/' . $toolpostId . '/' . $images[$picture]);
+                        unlink('files/' . $toolId . '/' . $images[$picture]);
                     }
                 }
                 unset($data['photo']);
                 unset($data['delete']);
 
                 // Update data in DB
-                $app['db.tool']->update($data, array('id' => $toolpostId));
+                $app['db.tools']->update($data, array('id' => $toolId));
 
                 // Redirect to overview
                 return $app->redirect($app['url_generator']->generate('admin.tool.overview') . '?feedback=edited');
@@ -212,18 +240,17 @@ class Tool implements ControllerProviderInterface {
 
         // Render the template with the form
         return $app['twig']->render('admin/tool/edit.twig', array(
-            'user' => $app['session']->get('user'),
-            'toolpost' => $toolpost,
+            'tool' => $toolpost,
             'editform' => $editform->createView(),
         ));
 
     }
 
 
-    public function delete(Application $app, $toolpostId) {
+    public function delete(Application $app, $toolId) {
 
         // Fetch toolpost with given $toolPostId and logged in user Id
-        $toolpost = $app['db.tool']->findForAuthor($toolpostId, $app['session']->get('user')['id']);
+        $toolpost = $app['db.tools']->findForUser($toolId, $app['session']->get('user')['id']);
 
         // Redirect to overview if it does not exist
         if ($toolpost === false) {
@@ -231,15 +258,15 @@ class Tool implements ControllerProviderInterface {
         }
 
         // Delete the toolpost
-        $app['db.tool']->delete(array('id' => $toolpostId));
-        $images = @scandir('files/'. $toolpostId);
+        $app['db.tools']->delete(array('id' => $toolId));
+        $images = @scandir('files/'. $toolId);
         unset($images[0]); unset($images[1]);
 
         if(!empty($images)) {
             foreach ($images as $image) {
-                unlink('files/' . $toolpostId . '/' . $image);
+                unlink('files/' . $toolId . '/' . $image);
             }
-            rmdir('files/' . $toolpostId);
+            rmdir('files/' . $toolId);
         }
 
         // Redirect to overview

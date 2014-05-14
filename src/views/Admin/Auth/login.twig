@@ -11,7 +11,7 @@
                 <form action="{{ path('auth.login') }}" method="post" {{ form_enctype(loginForm) }} novalidate="novalidate">
                     <!-- Token -->
                     {{ form_widget(loginForm._token) }}
-                    
+
                     <div class="form-group{% if not loginForm.username.vars.valid %}form-group has-error{% endif %}">
                         {{ form_label(loginForm.username) }}
                         {{ form_widget(loginForm.username) }}
@@ -34,7 +34,7 @@
 
                     <!-- Button -->
                     <div class="form-group">
-                            <button id="submit" name="submit" class="btn btn-info">{{ 'Login' | trans }}</button>
+                        <button id="submit" name="submit" class="btn btn-info">{{ 'Login' | trans }}</button>
                     </div>
                 </form>
             </div>

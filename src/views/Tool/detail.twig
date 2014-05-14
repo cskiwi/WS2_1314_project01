@@ -4,18 +4,52 @@
 {% set subTitle = 'Detail' %}
 
 {% block content %}
-    <p>{{ tool.title | escape('html') | raw}}</p>
-    <p>{{ tool.content | escape('html') | raw}}</p>
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ tool.title | raw}}</div>
+            <div class="panel-body">
+                {{ tool.content | raw}}
+            </div>
+        </div>
+    </div>
+    <div class=" col-lg-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Images'|trans }}</div>
+            <div class="panel-body">
+                {% if images %}
+                    {% for image in images %}
+                        <img class="img-responsive col-sm-3" src="{{ app.request.baseUrl }}/{{ app['rmt.base_url'] }}/{{ tool.id}}/{{ image }}"/>
+                    {% endfor %}
+                {% else  %}
+                    <p>No images for this product</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class=" col-lg-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Price'|trans }}</div>
+            <div class="panel-body">
+                {% if tool.price %}
+                    <span class="lead">{{ tool.price }}</span> / <small>day</small>
+                {% else %}
+                    <p>Free!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block SideNavigation %}
-    <li><a href="#"><i class="fa fa-user fa-fw"></i> {{ 'Contact %user%'|trans({'%user%': by.username}) }}</a></li>
+    <li><a href="#"><i class="fa fa-home fa-fw"></i> {{ 'Status'|trans }}: {{ tool.status |trans }}</a></li>
 
     {% if app.session.get('user')%}
-        <li><a href="#"><i class="fa fa-home fa-fw"></i> {{ 'Status:' |trans }} {{ tool.status }}</a></li>
+        <li><a href="#"><i class="fa fa-user fa-fw"></i> {{ 'Contact %user%'|trans({'%user%': by.username}) }}</a></li>
 
         {% if app.session.get('user').id == tool.user_id %}
-            <li><a href="#"><i class="fa fa-lock fa-fw"></i> {{ 'Delete' |trans }}</a></li>
+            <li><a href="{{ path('admin.tool.delete', { 'toolId': tool.id}) }}"><i class="fa fa-trash-o fa-fw"></i> {{ 'Delete' |trans }}</a></li>
+            <li><a href="{{ path('admin.tool.edit', { 'toolId': tool.id}) }}"><i class="fa fa-pencil fa-fw"></i> {{ 'Delete' |trans }}</a></li>
         {% endif %}
     {% endif %}
 {% endblock %}
+

@@ -5,8 +5,6 @@
 {% set subTitle = 'Add Tool' %}
 
 {% block content %}
-    <div class="container content">
-        <div class="row">
             <div class="col-sm-9 col-md-9">
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -42,10 +40,9 @@
                                     {% endfor %}
                                 {% endif %}
                             </div>
-
                             <div class="form-group{% if not addForm.price.vars.valid %}form-group has-error{% endif %}">
-                                {{ form_label(addForm.price) }}
-                                {{ form_widget(addForm.price) }}
+                                {{ form_label(addForm.price) }}  / {{ 'Day' | trans }}
+                                {{ form_widget(addForm.price)}}
                                 {% if not addForm.price.vars.valid %}
                                     {% for error in addForm.price.vars.errors %}
                                         <small>{{ error.message|trans|capitalize }}</small>
@@ -90,8 +87,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 {% endblock %}
 {% block scripts %}
     <script src="{{ app.request.baseUrl }}/assets/tinymce/tinymce.min.js"></script>
@@ -99,7 +94,8 @@
             theme : 'modern',
             skin: 'light',
             selector:'textarea',
-            statusbar : false
+            statusbar : false,
+            menubar: false
         });</script>
     <script>
         var $collectionHolder;
@@ -125,10 +121,6 @@
 
             if(nrOfTags == 0){
                 addTagForm($collectionHolder, $newLinkLi);
-            }
-
-            if ($('.tag > input:text').val().length == 0) {
-                console.log('empty');
             }
         });
 

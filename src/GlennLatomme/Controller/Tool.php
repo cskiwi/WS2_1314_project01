@@ -20,24 +20,29 @@ class Tool implements ControllerProviderInterface {
             ->bind('tool.search');
 
         $controllers
-            ->get('/{id}/', array($this, 'detail'))
-            ->assert('id', '\d+')
+            ->get('/{toolId}/', array($this, 'detail'))
+            ->assert('toolId', '\d+')
             ->bind('tool.detail');
 
         return $controllers;
 
     }
 
-    public function detail(Application $app, $id){
-        $tool = $app['db.tools']->find($id);
+    public function detail(Application $app, $toolId){
+        $tool = $app['db.tools']->find($toolId);
         $by = $app['db.users']->find($tool['user_id']);
         $tags = $app['db.keywords']->findKeywords($tool['id']);
+        $images = null;
+
+        foreach(glob($app['rmt.base_path'] . $toolId .DIRECTORY_SEPARATOR. "*.{jpg,JPG,jpeg,JPEG,png,PNG}",GLOB_BRACE) as $image) $images[]= basename($image);
+
 
         if ($tool){
             return $app['twig']->render('tool/detail.twig', [
                 'tool' => $tool,
                 'by' => $by,
-                'tags' => $tags
+                'tags' => $tags,
+                'images' => $images
             ]);
         }
         return $app->redirect($app['url_generator']->generate('index'));
@@ -50,7 +55,7 @@ class Tool implements ControllerProviderInterface {
         $user = $app['db.users']->find($app['session']->get('user')['id']);
         $search_result = "";
         if ($data){
-            // var_dump(explode(" ", $data));
+// var_dump(explode(" ", $data));
             $search_result = $app['db.tools']->search(explode(" ", $data));
         }
         return $app['twig']->render('tool/search.twig', [

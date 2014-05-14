@@ -16,7 +16,7 @@ class Tools extends Repository {
     }
 
     public function findForUser($id, $userId) {
-        return $this->db->fetchAssoc('SELECT '. $this->getTableName(). '.* from '. $this->getTableName(). ' WHERE '. $this->getTableName(). '.id = ? AND author_id = ?', array($id, $userId));
+        return $this->db->fetchAssoc('SELECT '. $this->getTableName(). '.* from '. $this->getTableName(). ' WHERE '. $this->getTableName(). '.id = ? AND user_id = ?', array($id, $userId));
     }
 
     public function findAll() {

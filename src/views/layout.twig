@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ app.request.baseUrl }}/assets/layout/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ app.request.baseUrl }}/assets/layout/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ app.request.baseUrl }}/assets/layout/css/layout.css">
+    {% block stylesheets %}{% endblock %}
 </head>
 <body>
 
@@ -170,14 +171,14 @@
                     {% if app.session.get('tools') %}
                         <li class="divider"></li>
                         {% for tool in app.session.get('tools') %}
-                            <li><a href="{{ path('tool.detail',{ 'id' : tool.id}) }}">
+                            <li><a href="{{ path('tool.detail',{ 'toolId' : tool.id}) }}">
                                     <strong>{{ tool.title[:15]  }} {% if tool.title |length > 15 %}... {% endif %}</strong>
-                                    <span class="pull-right text-muted">Status: {{ tool.status |trans }}</span>
+                                    <span class="pull-right text-muted">{{ 'Status'|trans }}: {{ tool.status |trans }}</span>
                                 </a></li>
                             <li class="divider"></li>
                         {% endfor %}
                         <li>
-                            <a class="text-center" href="#">
+                            <a class="text-center" href="{{ path('admin.tool.overview') }}">
                                 <strong>{{ 'See all tools'|trans }}</strong>
                                 <i class="fa fa-angle-right"></i>
                             </a>
@@ -199,7 +200,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-user">
                     {# User is logged in: show nagivation #}
-                    <li><a href="{{ path('admin.overview') }}"><i class="fa fa-bars fa-fw"></i> {{ 'Dashboard' |trans }}</a></li>
+                    <li><a href="{{ path('admin.dashboard') }}"><i class="fa fa-bars fa-fw"></i> {{ 'Dashboard' |trans }}</a></li>
                     <li><a href="{{ path('user.profile') }}"><i class="fa fa-user fa-fw"></i> {{ 'User Profile' |trans }}</a></li>
                     <li><a href="{{ path('admin.settings') }}"><i class="fa fa-gear fa-fw"></i> {{ 'Settings' |trans }}</a></li>
                     <li class="divider"></li>
@@ -254,10 +255,10 @@
             <h1 class="page-header">{{ subTitle }}</h1>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            {% block content %}
-            {% endblock %}
+    <div class="container content">
+        <div class="row">
+                {% block content %}
+                {% endblock %}
         </div>
     </div>
 </div>
@@ -267,7 +268,6 @@
 <!-- Core Scripts - Include with every page -->
 <script src="{{ app.request.baseUrl }}/assets/layout/js/jquery-1.10.2.js"></script>
 <script src="{{ app.request.baseUrl }}/assets/layout/js/bootstrap.min.js"></script>
-<script src="{{ app.request.baseUrl }}/assets/layout/js/plugins/metisMenu/jquery.metisMenu.js"></script>
 
 
 <!-- Include with every page -->

@@ -1,14 +1,39 @@
 {% extends 'layout.twig' %}
 
-{% set pageTitle = 'Edit Tool' %}
+{% set pageTitle = 'Edit' |trans %}
+{% set subTitle = 'Edit' |trans %}
 
 {% block content %}
-    <h1 class="page-header">{{ 'Welcome'|trans }} !</h1>
-    <p>{{ 'locale_lang'|trans}}</p>
-    <p><strong>Choose language:</strong>
-        {% for lang in languages %}
-            [ <a href="lang/{{ lang }}"> {{ lang }} </a> ]
-        {% endfor %}
-    </p>
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ tool.title | raw}}</div>
+            <div class="panel-body">
+                {{ tool.content | raw}}
+            </div>
+        </div>
+    </div>
 
+    <div class=" col-lg-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Price'|trans }}</div>
+            <div class="panel-body">
+                {% if tool.price %}
+                    <span class="lead">{{ tool.price }}</span> / <small>day</small>
+                {% else %}
+                    Free!
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
+
+{% block SideNavigation %}
+    <li><a href="#"><i class="fa fa-home fa-fw"></i> {{ 'Status:' |trans }} {{ tool.status }}</a></li>
+
+    {% if app.session.get('user').id == tool.user_id %}
+        <li>
+            <a href="{{ path('admin.tool.delete', { 'toolId': tool.id}) }}"><i class="fa fa-lock fa-fw"></i> {{ 'Delete' |trans }}</a>
+        </li>
+    {% endif %}
+{% endblock %}
+

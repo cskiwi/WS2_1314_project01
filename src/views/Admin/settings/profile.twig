@@ -1,0 +1,34 @@
+    <div class="panel panel-default">
+        <div class="panel-heading">{{ 'Profile settings' |trans }}</div>
+        <div class="panel-body">
+            <form action="{{ path('admin.settings', {type:'profile'}) }}" method="post" {{ form_enctype(form) }} novalidate="novalidate">
+                <!-- Token -->
+                {{ form_widget(form._token) }}
+
+                <div class="form-group{% if not form.username.vars.valid %}form-group has-error{% endif %}">
+                    {{ form_label(form.username) }}
+                    {{ form_widget(form.username) }}
+                    {% if not form.username.vars.valid %}
+                        {% for error in form.username.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="form-group{% if not form.email.vars.valid %}form-group has-error{% endif %}">
+                    {{ form_label(form.email) }}
+                    {{ form_widget(form.email) }}
+                    {% if not form.email.vars.valid %}
+                        {% for error in form.email.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Button -->
+                <div class="form-group">
+                    <button id="submit" name="submit" class="btn btn-info">{{ 'Save' | trans }}</button>
+                </div>
+            </form>
+        </div>
+    </div>

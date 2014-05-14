@@ -78,7 +78,7 @@ class Auth implements ControllerProviderInterface {
                         unset($user['password']);
 
                         // Store user in session
-                        $app['session']->set('user', $user);
+                        $app['session']->set('user', ['id' => $user['id'], 'username' => $user['username']]);
 
                         $tools = $app['db.tools']->findAllForUser($data['username']);
                         $app['session']->set('tools', array_slice($tools, 0, 5, true));
@@ -165,7 +165,7 @@ class Auth implements ControllerProviderInterface {
     public function logout(Application $app) {
         $app['session']->remove('user');
         $app['session']->remove('tools');
-        return $app->redirect($app['url_generator']->generate('index'));
+        return $app->redirect($_SERVER['HTTP_REFERER']);
     }
 
 }
