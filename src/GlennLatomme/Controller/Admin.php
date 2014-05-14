@@ -47,9 +47,6 @@ class Admin implements ControllerProviderInterface {
     public function loginCheck(\Symfony\Component\HttpFoundation\Request $request, Application $app){
         if (!$app['session']->get('user')) {
             return $app->redirect($app['url_generator']->generate('auth.login'));
-        } else {
-            $tools = $app['db.tools']->findAllForUser($app['session']->get('user')['id']);
-            $app['session']->set('tools', array_slice($tools, 0, 5, true));
         }
     }
 

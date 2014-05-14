@@ -57,7 +57,7 @@
                             <div>
                                 <strong>John Smith</strong>
                         <span class="pull-right text-muted">
-                            <em>Yesterday</em>
+                            <em>{{ 'Yesterday' | trans }}</em>
                         </span>
                             </div>
                             <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
@@ -69,7 +69,7 @@
                             <div>
                                 <strong>John Smith</strong>
                         <span class="pull-right text-muted">
-                            <em>Yesterday</em>
+                            <em>{{ 'Yesterday' | trans }}</em>
                         </span>
                             </div>
                             <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
@@ -81,7 +81,7 @@
                             <div>
                                 <strong>John Smith</strong>
                         <span class="pull-right text-muted">
-                            <em>Yesterday</em>
+                            <em>{{ 'Yesterday' | trans }}</em>
                         </span>
                             </div>
                             <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
@@ -163,7 +163,7 @@
                 <ul class="dropdown-menu dropdown-tasks">
                     <li>
                         <a class="text-center" href="{{ path('admin.tool.add') }}">
-                            <strong>Add new tool</strong>
+                            <strong>{{ 'Add new tool'|trans }}</strong>
                             <i class="fa fa-plus"></i>
                         </a>
                     </li>
@@ -172,13 +172,13 @@
                         {% for tool in app.session.get('tools') %}
                             <li><a href="{{ path('tool.detail',{ 'id' : tool.id}) }}">
                                     <strong>{{ tool.title[:15]  }} {% if tool.title |length > 15 %}... {% endif %}</strong>
-                                    <span class="pull-right text-muted">Status: {{ tool.status }}</span>
+                                    <span class="pull-right text-muted">Status: {{ tool.status |trans }}</span>
                                 </a></li>
                             <li class="divider"></li>
                         {% endfor %}
                         <li>
                             <a class="text-center" href="#">
-                                <strong>See All Tools</strong>
+                                <strong>{{ 'See all tools'|trans }}</strong>
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         </li>

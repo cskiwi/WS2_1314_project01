@@ -4,7 +4,8 @@
 {% set subTitle = 'Detail' %}
 
 {% block content %}
- {{ tool.title }}
+    <p>{{ tool.title | escape('html') | raw}}</p>
+    <p>{{ tool.content | escape('html') | raw}}</p>
 {% endblock %}
 
 {% block SideNavigation %}

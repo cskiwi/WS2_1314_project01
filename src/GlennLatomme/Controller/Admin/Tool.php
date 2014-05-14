@@ -51,30 +51,27 @@ class Tool implements ControllerProviderInterface {
             ->add('title', 'text', array(
                 'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 5))),
                 'attr' => array(
-                    'class' => 'form-control',
                     'placeholder' => 'Enter a good title'
                 )
             ))
             ->add('price', 'text', array(
                 'constraints' => array(new Assert\Range(array('min' => 0, 'max' => '500'))),
                 'attr' => array(
-                    'class' => 'form-control',
-                    'placeholder' => 'Enter a price'
-                )
+                    'placeholder' => 'Enter a price',
+                    'input_group' => array('prepend' => '@', 'size' => 'large')
+                ),
             ))
             ->add('content', 'textarea', array(
                 'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 5))),
                 'attr' => array(
-                    'class' => 'form-control',
                     'placeholder' => 'Enter some good content',
                     'rows' => 10
                 )
             ))
-            ->add('image', 'file', array(
-                'constraints' => array(new Assert\Image()),
+            ->add('images', 'file', array(
                 'attr' => array(
-                    'class' => 'form-control',
-                    "accept" => "image/*",
+                    'multiple' => 'multiple',
+                    'accept' => 'image/*'
                 )
             ))
             ->add('tags', 'collection', array(
@@ -82,9 +79,7 @@ class Tool implements ControllerProviderInterface {
                 'allow_add' => true,
                 'allow_delete' => true,
                 'options'  => array(
-                    'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 3))),
                     'attr' => array(
-                        'class' => 'form-control',
                         'placeholder' => 'Tag'
                     )
                 ),
@@ -97,28 +92,29 @@ class Tool implements ControllerProviderInterface {
             if ($addForm->isValid()) {
                 $data = $addForm->getData();
                 $files = $app['request']->files->get($addForm->getName());
-                if (isset($files['image'])){
-                    if ('.jpg' != substr($files['image']->getClientOriginalName(), -4)) {
-                        $addForm->get('image')->addError(new \Symfony\Component\Form\FormError('Only .jpg allowed'));
-                    }
-                }
-                if (isset($files['image'])) {
-                    $filename = time().'-'. $files['image']->getClientOriginalName();
-                }
 
                 $app['db.tools']->insert(array(
                     'user_id'  => $user['id'],
                     'title' =>  htmlentities($data['title']),
                     'content' =>  $data['content'],
-                    'price' =>  $data['price'],
-                    'image' => $filename
+                    'price' =>  $data['price']
                 ));
+
                 $id = $app['db.tools']->lastID();
+
                 foreach($data['tags'] as $tag){
                     $app['db.keywords']->insertKey(htmlentities($tag), $id);
                 }
-                if (isset($files['image'])) {
-                    $files['image']->move($app['rmt.base_path'] . $id, $filename);
+
+
+                foreach ($files['images'] as $image){
+                    // Uploaded file must be `.jpg`!
+                    if (isset($image) && ('.jpg' == substr($image->getClientOriginalName(), -4))) {
+                        // Move it to its new location
+                        $image->move($app['rmt.base_path'] . $id, time().'-'. $image->getClientOriginalName());
+                    } else {
+                        $addForm->get('images')->addError(new \Symfony\Component\Form\FormError('Only .jpg allowed'));
+                    }
                 }
 
                 return $app->redirect($app['url_generator']->generate('tool.detail', array('id' => $id)));

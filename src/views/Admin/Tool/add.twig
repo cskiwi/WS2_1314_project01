@@ -1,4 +1,5 @@
 {% extends 'layout.twig' %}
+{% form_theme addForm 'bootstrap.html.twig' %}
 
 {% set pageTitle = 'Add Tool' %}
 {% set subTitle = 'Add Tool' %}
@@ -12,6 +13,8 @@
                         <h3 class="panel-title">Add Tool</h3>
                     </div>
                     <div class="panel-body">
+
+
                         {% if canAdd == false %}
                             <div class="alert alert-danger">You have to have an address in order to add tools <br/> please add one in <a href="{{ path('admin.settings', {'type':'address'}) }}">address settings</a> </div>
                         {% endif %}
@@ -19,90 +22,68 @@
                             <!-- Token -->
                             {{ form_widget(addForm._token) }}
 
-                            <!-- Text input-->
-                            <div class="form-group col-sm-12 {% if form_errors(addForm.title) %}has-error error {% endif %}">
-                                <div class="col-sm-3">
-                                    <label class="control-label ">{{ form_label(addForm.title) }}</label>
-                                </div>
-                                <div class="col-sm-9">
 
-                                    {{ form_widget(addForm.title) }}
-
-                                    {% if form_errors(addForm.title) %}
-                                        <span class="help-block text-danger">{{ form_errors(addForm.title) }}</span>
-                                    {% endif %}
-                                </div>
+                            <div class="form-group{% if not addForm.title.vars.valid %}form-group has-error{% endif %}">
+                                {{ form_label(addForm.title) }}
+                                {{ form_widget(addForm.title) }}
+                                {% if not addForm.title.vars.valid %}
+                                    {% for error in addForm.title.vars.errors %}
+                                        <small>{{ error.message|trans|capitalize }}</small>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
 
-                            <!-- Text input-->
-                            <div class="form-group  col-sm-12 {% if form_errors(addForm.content) %}has-error error {% endif %}">
-                                <div class="col-sm-3">
-                                    <label class="control-label">{{ form_label(addForm.content) }}</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    {{ form_widget(addForm.content) }}
-
-                                    {% if form_errors(addForm.content) %}
-                                        <span class="help-block text-danger">{{ form_errors(addForm.content) }}</span>
-                                    {% endif %}
-
-                                </div>
+                            <div class="form-group{% if not addForm.content.vars.valid %}form-group has-error{% endif %}">
+                                {{ form_label(addForm.content) }}
+                                {{ form_widget(addForm.content) }}
+                                {% if not addForm.content.vars.valid %}
+                                    {% for error in addForm.content.vars.errors %}
+                                        <small>{{ error.message|trans|capitalize }}</small>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
 
-                            <!-- Text input-->
-                            <div class="form-group  col-sm-12 {% if form_errors(addForm.price) %}has-error error {% endif %}">
-                                <div class="col-sm-3">
-                                    <label class="control-label">{{ form_label(addForm.price) }}</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    {{ form_widget(addForm.price) }}
-                                    <p class="help-block">Enter a price, you can enter 0 or leave blank if you want to offer it for free</p>
-
-                                    {% if form_errors(addForm.price) %}
-                                        <span class="help-block text-danger">{{ form_errors(addForm.price) }}</span>
-                                    {% endif %}
-                                </div>
+                            <div class="form-group{% if not addForm.price.vars.valid %}form-group has-error{% endif %}">
+                                {{ form_label(addForm.price) }}
+                                {{ form_widget(addForm.price) }}
+                                {% if not addForm.price.vars.valid %}
+                                    {% for error in addForm.price.vars.errors %}
+                                        <small>{{ error.message|trans|capitalize }}</small>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
 
-                            <div class="form-group  col-sm-12 {% if form_errors(addForm.image) %}has-error error {% endif %}">
-                                <div class="col-sm-3">
-                                    <label class="control-label">{{ form_label(addForm.image) }}</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    {{ form_widget(addForm.image) }}
-
-                                    {% if form_errors(addForm.image) %}
-                                        <span class="help-block text-danger">{{ form_errors(addForm.image) }}</span>
-                                    {% endif %}
-                                </div>
+                            <div class="form-group{% if not addForm.images.vars.valid %}form-group has-error{% endif %}">
+                                {{ form_label(addForm.images) }}
+                                {{ form_widget(addForm.images, { 'full_name': addForm.images.vars.full_name ~ '[]'} ) }}
+                                {% if not addForm.images.vars.valid %}
+                                    {% for error in addForm.images.vars.errors %}
+                                        <small>{{ error.message|trans|capitalize }}</small>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
 
-                            <div class="form-group  col-sm-12 ">
-                                <div class="col-sm-3">
-                                    <label class="control-label">{{ form_label(addForm.tags) }}</label>
-                                </div>
-                                <div class="col-sm-9">
-                                    <ul class="tags" data-prototype="{{ form_widget(addForm.tags.vars.prototype)|e }}">
 
-                                        {% for tag in addForm.tags %}
-                                            <li class="tag {% if form_errors(tag) %}has-error error {% endif %}">
-                                                <div class="input-group">
-                                                    {{ form_widget(tag) }}
-                                                </div>
-                                                {% if form_errors(tag) %}
-                                                    <span class="help-block text-danger">{{ form_errors(tag) }}</span>
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
+                            <div class="form-group">
+                                {{ form_label(addForm.tags) }}
+                                <ul class="tags" data-prototype="{{ form_widget(addForm.tags.vars.prototype)|e }}">
+                                    {% for tag in addForm.tags %}
+                                        <li class="tag {% if form_errors(tag) %}has-error error {% endif %}">
+                                            <div class="input-group">
+                                                {{ form_widget(tag) }}
+                                            </div>
+                                            {% if not tag.vars.valid %}
+                                                {% for error in tag.vars.errors %}
+                                                    <small>{{ error.message|trans|capitalize }}</small>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
                             </div>
 
-                            <!-- Button -->
-                            <div class="form-group col-sm-12 ">
-                                <div class="col-sm-3">
-                                    <button id="submit" name="submit" class="btn btn-info">Send</button>
-                                </div>
+                            <div class="form-group">
+                                <button id="submit" name="submit" class="btn btn-info">{{ 'Add' | trans }}</button>
                             </div>
                         </form>
 
@@ -117,7 +98,8 @@
     <script>tinymce.init({
             theme : 'modern',
             skin: 'light',
-            selector:'textarea'
+            selector:'textarea',
+            statusbar : false
         });</script>
     <script>
         var $collectionHolder;
