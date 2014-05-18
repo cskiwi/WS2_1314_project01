@@ -6,9 +6,9 @@
 {% block content %}
     <div class="col-lg-12">
         <div class="panel panel-default">
-            <div class="panel-heading">{{ tool.title | raw}}</div>
+            <div class="panel-heading">{{ tool.title | striptags}}</div>
             <div class="panel-body">
-                {{ tool.content | raw}}
+                {{ tool.content | striptags}}
             </div>
         </div>
     </div>
@@ -18,7 +18,9 @@
             <div class="panel-body">
                 {% if images %}
                     {% for image in images %}
-                        <img class="img-responsive col-sm-3" src="{{ app.request.baseUrl }}/{{ app['rmt.base_url'] }}/{{ tool.id}}/{{ image }}"/>
+                        <div class="col-sm-4">
+                            <img class="img-thumbnail img-responsive" src="{{ app.request.baseUrl }}/{{ app['rmt.base_url'] }}/{{ tool.id}}/{{ image }}"/>
+                        </div>
                     {% endfor %}
                 {% else  %}
                     <p>No images for this product</p>
@@ -26,17 +28,29 @@
             </div>
         </div>
     </div>
-    <div class=" col-lg-4">
+    <div class="col-lg-4">
         <div class="panel panel-default">
-            <div class="panel-heading">{{ 'Price'|trans }}</div>
+            <div class="panel-heading">{{ 'Info'|trans }}</div>
             <div class="panel-body">
                 {% if tool.price %}
                     <span class="lead">{{ tool.price }}</span> / <small>day</small>
                 {% else %}
                     <p>Free!</p>
                 {% endif %}
+
+                <button class="btn btn-default">Rent!</button>
             </div>
         </div>
+    </div>
+    <div class="col-lg-4">
+        {% if (tags | length > 0) %}
+            <div class="help-block">
+                Tags:
+                {% for tag in tags %}
+                    <a href="{{ path('tool.search') }}?q={{ tag.key }}">{{ tag.key }}</a>{{ loop.last ? '' : ', ' }}
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -44,11 +58,11 @@
     <li><a href="#"><i class="fa fa-home fa-fw"></i> {{ 'Status'|trans }}: {{ tool.status |trans }}</a></li>
 
     {% if app.session.get('user')%}
-        <li><a href="#"><i class="fa fa-user fa-fw"></i> {{ 'Contact %user%'|trans({'%user%': by.username}) }}</a></li>
+        <li><a href="{{ path('messages.compose', {'to' :  by.username} ) }}"><i class="fa fa-user fa-fw"></i> {{ 'Contact %user%'|trans({'%user%': by.username}) }}</a></li>
 
         {% if app.session.get('user').id == tool.user_id %}
             <li><a href="{{ path('admin.tool.delete', { 'toolId': tool.id}) }}"><i class="fa fa-trash-o fa-fw"></i> {{ 'Delete' |trans }}</a></li>
-            <li><a href="{{ path('admin.tool.edit', { 'toolId': tool.id}) }}"><i class="fa fa-pencil fa-fw"></i> {{ 'Delete' |trans }}</a></li>
+            <li><a href="{{ path('admin.tool.edit', { 'toolId': tool.id}) }}"><i class="fa fa-pencil fa-fw"></i> {{ 'Edit' |trans }}</a></li>
         {% endif %}
     {% endif %}
 {% endblock %}

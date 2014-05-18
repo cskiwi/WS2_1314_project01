@@ -32,6 +32,7 @@ $app->register(new Knp\Provider\RepositoryServiceProvider(), array(
         'db.users' => 'GlennLatomme\\Repository\\Users',
         'db.tools' => 'GlennLatomme\\Repository\\Tools',
         'db.keywords' => 'GlennLatomme\\Repository\\Keywords',
+        'db.messages' => 'GlennLatomme\\Repository\\Messaging',
     )
 ));
 

@@ -26,8 +26,8 @@ $app->get('/lang/{lang}', function($lang) use($app) {
 
 
 $app->mount('/',        new \GlennLatomme\Controller\Home());
-$app->mount('/tool',    new \GlennLatomme\Controller\Tool());
-$app->mount('/user',    new \GlennLatomme\Controller\User());
+$app->mount('/tool/',    new \GlennLatomme\Controller\Tool());
+$app->mount('/user/',    new \GlennLatomme\Controller\User());
 
-$app->mount('/admin',   new \GlennLatomme\Controller\Admin());
+$app->mount('/admin/',   new \GlennLatomme\Controller\Admin());
 $app->mount('/auth/',   new \GlennLatomme\Controller\Admin\Auth());

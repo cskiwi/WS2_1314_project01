@@ -20,6 +20,7 @@ class Admin implements ControllerProviderInterface {
 
         // Mount Admin “Subcontrollers”
         $app->mount('/admin/tool/', new Admin\Tool());
+        $app->mount('/admin/message/', new Admin\Message());
 
         // Redirect to blog dashboard if we hit /admin/
         $controllers

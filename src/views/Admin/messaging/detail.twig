@@ -1,0 +1,38 @@
+{% extends 'layout.twig' %}
+
+{% set pageTitle = 'Detail' |trans %}
+{% set subTitle = 'Detail' |trans %}
+
+{% block content %}
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Title</div>
+            <div class="panel-body">
+                {{ message.title }}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">From</div>
+            <div class="panel-body">
+                {{ fromUser.username }}
+                </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">Content</div>
+            <div class="panel-body">
+                {{ message.content |raw }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block SideNavigation %}
+    <li><a href="{{ path('messages.compose') }}"><i class="fa fa-pencil fa-fw"></i> {{ 'Compose new' |trans }}</a></li>
+    <li><a href="{{ path('messages.compose', {'to' : fromUser.username}) }}"><i class="fa fa-reply fa-fw"></i> {{ 'Reply' |trans }}</a></li>
+{% endblock %}

@@ -9,8 +9,15 @@ $app->run();
 
 // set tools
 if($app['session']->get('user')) {
-    $tools = $app['db.tools']->findAllForUser($app['session']->get('user')['id']);
+    $userId = $app['session']->get('user')['id'];
+
+    $tools = $app['db.tools']->findAllForUser($userId);
     $app['session']->set('tools', array_slice($tools, 0, 5, true));
+
+    $tools = $app['db.messages']->findInbox($userId);
+    $app['session']->set('messages', array_slice($tools, 0, 5, true));//*/
+
+    $app['session']->set('messagesUnread', $app['db.messages']->countUnread($userId)['count(*)']);
 }
 
 // get messages

@@ -1,39 +1,176 @@
 {% extends 'layout.twig' %}
+{% form_theme editForm 'bootstrap.html.twig' %}
 
 {% set pageTitle = 'Edit' |trans %}
 {% set subTitle = 'Edit' |trans %}
 
 {% block content %}
-    <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">{{ tool.title | raw}}</div>
-            <div class="panel-body">
-                {{ tool.content | raw}}
-            </div>
-        </div>
-    </div>
 
-    <div class=" col-lg-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">{{ 'Price'|trans }}</div>
-            <div class="panel-body">
-                {% if tool.price %}
-                    <span class="lead">{{ tool.price }}</span> / <small>day</small>
-                {% else %}
-                    Free!
-                {% endif %}
+    <form id="editToolForm" action="{{ path('admin.tool.edit', {'toolId' : tool.id }) }}" method="post" {{ form_enctype(editForm) }} novalidate="novalidate">
+        {{ form_widget(editForm._token) }}
+
+        <div class="col-lg-12">
+            <div class="panel {% if form_errors(editForm.title) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading">{{ form_label(editForm.title) }}</div>
+                <div class="panel-body">
+                    {{ form_widget(editForm.title) }}
+                    {% if not editForm.title.vars.valid %}
+                        {% for error in editForm.title.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
+
+        <div class="col-lg-12">
+            <div class="panel  {% if form_errors(editForm.content) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading">{{ form_label(editForm.content) }}</div>
+                <div class="panel-body">
+                    {{ form_widget(editForm.content) }}
+                    {% if not editForm.content.vars.valid %}
+                        {% for error in editForm.content.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="panel  {% if form_errors(editForm.tags) %}panel-danger{% else %}panel-default{% endif %}">
+
+                <div class="panel-heading">{{ form_label(editForm.tags) }}</div>
+                <div class="panel-body">
+                    <ul class="tags" data-prototype="{{ form_widget(editForm.tags.vars.prototype)|e }}">
+                        {% for tag in editForm.tags %}
+                            <li class="tag {% if form_errors(tag) %}panel-danger{% endif %}">
+                                <div class="input-group">
+                                    {{ form_widget(tag) }}
+                                </div>
+                                {% if not tag.vars.valid %}
+                                    {% for error in tag.vars.errors %}
+                                        <small>{{ error.message|trans|capitalize }}</small>
+                                    {% endfor %}
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="panel  {% if form_errors(editForm.price) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading"> {{ form_label(editForm.price) }}  / {{ 'Day' | trans }}</div>
+                <div class="panel-body">
+                    {{ form_widget(editForm.price)}}
+                    {% if not editForm.price.vars.valid %}
+                        {% for error in editForm.price.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="panel  {% if form_errors(editForm.images) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading">{{ form_label(editForm.images) }}</div>
+                <div class="panel-body">
+                    {{ form_widget(editForm.images, { 'full_name': editForm.images.vars.full_name ~ '[]'} ) }}
+                    {% if not editForm.images.vars.valid %}
+                        {% for error in editForm.images.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if editForm.delete.vars.form.children %}
+                        <p>Select the photo's you want to delete</p>
+                        {% for children in editForm.delete.vars.form.children %}
+                            <div class="row col-md-3">
+                                <label for="{{ children.vars.id }}">
+                                    <input type="checkbox" name="{{ children.vars.full_name }}" id="{{ children.vars.id }}" value="{{ children.vars.value }}"{% if children.vars.data %} checked="checked"{% endif %} />
+
+                                    <img class="img-thumbnail" src="{{ app.request.baseUrl }}/{{ app['rmt.base_url']}}/{{ tool.id}}/{{ children.vars.label|trans }}" alt="Image">
+                                </label>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </form>
+
 {% endblock %}
 
 {% block SideNavigation %}
     <li><a href="#"><i class="fa fa-home fa-fw"></i> {{ 'Status:' |trans }} {{ tool.status }}</a></li>
-
     {% if app.session.get('user').id == tool.user_id %}
-        <li>
-            <a href="{{ path('admin.tool.delete', { 'toolId': tool.id}) }}"><i class="fa fa-lock fa-fw"></i> {{ 'Delete' |trans }}</a>
-        </li>
+        <li><a href="#" onclick="document.forms['editToolForm'].submit();"><i class="fa fa-save fa-fw"></i> {{ 'Save' |trans }}</a></li>
+        <li><a href="{{ path('admin.tool.delete', { 'toolId': tool.id}) }}"><i class="fa fa-lock fa-fw"></i> {{ 'Delete' |trans }}</a></li>
     {% endif %}
+{% endblock %}
+
+
+{% block scripts %}
+    <script src="{{ app.request.baseUrl }}/assets/tinymce/tinymce.min.js"></script>
+    <script>tinymce.init({
+            theme : 'modern',
+            skin: 'light',
+            selector:'textarea',
+            statusbar : false,
+            menubar: false
+        });</script>
+    <script>
+        var $collectionHolder;
+
+        // setup an "add a tag" link
+        var $addTagLink = $('<a href="#" class="add_tag_link">Add a tag</a>');
+        var $newLinkLi = $('<li/>').append($addTagLink);
+
+        jQuery(document).ready(function() {
+            $collectionHolder = $('ul.tags');
+            var nrOfTags = $collectionHolder.find(':input').length;
+
+            $collectionHolder.find('li.tag').each(function() {
+                addTagFormDeleteLink($(this));
+            });
+            $collectionHolder.append($newLinkLi);
+            $collectionHolder.data('index', nrOfTags);
+
+            $addTagLink.on('click', function(e) {
+                e.preventDefault();
+                addTagForm($collectionHolder, $newLinkLi);
+            });
+
+            if(nrOfTags == 0){
+                addTagForm($collectionHolder, $newLinkLi);
+            }
+        });
+
+        function addTagForm($collectionHolder, $newLinkLi) {
+            var prototype = $collectionHolder.data('prototype');
+            var index = $collectionHolder.data('index');
+            var newForm = prototype.replace(/__name__/g, index);
+
+            $collectionHolder.data('index', index + 1);
+
+            var $newFormLi = $('<li class="tag input-group" />').append(newForm);
+            $newLinkLi.before($newFormLi);
+            addTagFormDeleteLink($newFormLi);
+        }
+
+        function addTagFormDeleteLink($tagFormLi) {
+            var $removeFormA = $('<a class="input-group-addon btn-danger delete-tag" href="#"><span class="fa fa-minus"></a>');
+            $tagFormLi.find(':input').after($removeFormA);
+
+            $removeFormA.on('click', function(e) {
+                e.preventDefault();
+                $tagFormLi.remove();
+            });
+        }
+    </script>
 {% endblock %}
 

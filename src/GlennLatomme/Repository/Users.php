@@ -11,8 +11,11 @@ class Users extends Repository {
     public function getTableName() {
         return 'users';
     }
-    public function findUserByUsername($email) {
-        return $this->db->fetchAssoc('SELECT * FROM '. $this->getTableName() . ' WHERE username = ?', array($email));
+    public function findUserByEmail($email) {
+        return $this->db->fetchAssoc('SELECT * FROM '. $this->getTableName() . ' WHERE email = ?', array($email));
+    }
+    public function findUserByUsername($username) {
+        return $this->db->fetchAssoc('SELECT * FROM '. $this->getTableName() . ' WHERE username = ?', array($username));
     }
 
     public function lastID(){

@@ -31,10 +31,11 @@ class Tools extends Repository {
         return $this->db->lastInsertId();
     }
     public function search($tags){
-        $query = 'SELECT DISTINCT tools.*' .
-            'FROM keywords ' .
-            'INNER JOIN key_for_tools on keywords.id = key_for_tools.key_id ' .
-            'INNER JOIN tools on key_for_tools.tools_id = tools.id ' .
+        $query =
+            'SELECT DISTINCT tools.id, tools.content, tools.title, users.username FROM tools ' .
+            'INNER JOIN key_for_tools on key_for_tools.tools_id = tools.id ' .
+            'INNER JOIN keywords on key_for_tools.key_id = keywords.id ' .
+            'INNER JOIN users on users.id = tools.user_id ' .
             'WHERE';
 
         $size = sizeof($tags);
@@ -42,12 +43,15 @@ class Tools extends Repository {
             $query .= ' `key` LIKE \'%'.$tags[$i] .'%\'';
             if ($i < $size-1) {
                 $query .= ' OR';
-            } else {
-                $query .= ';';
             }
         }
+        $query .= ' ;';
+
         $resultSet =  $this->db->fetchAll($query);
-        $orderd = [[]];
+        /*var_dump($query);
+        var_dump($resultSet);
+        die();//*/
+        /*$orderd = [[]];
 
         foreach($resultSet as $result){
             $id = $this->multidimensional_search($orderd, ['id' => $result['user_id']]);
@@ -60,8 +64,8 @@ class Tools extends Repository {
                 $id = array_push($orderd, $user);
                 $orderd[$id-1]['tools']=[$result];
             }
-        }
-        return $orderd;
+        }*/
+        return $resultSet;
     }
 
     function multidimensional_search($parents, $searched) {

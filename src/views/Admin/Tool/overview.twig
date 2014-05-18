@@ -37,3 +37,7 @@
         </table>
     </div>
 {% endblock %}
+
+{% block SideNavigation %}
+    <li><a href="{{ path('admin.tool.add') }}"><i class="fa fa-plus fa-fw"></i> {{ 'Add' |trans }}</a></li>
+{% endblock %}

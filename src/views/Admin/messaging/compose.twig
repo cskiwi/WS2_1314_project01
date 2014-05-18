@@ -1,0 +1,67 @@
+{% extends 'layout.twig' %}
+{% form_theme composeForm 'bootstrap.html.twig' %}
+
+{% set pageTitle = 'Compose' |trans %}
+{% set subTitle = 'Compose' |trans %}
+
+{% block content %}
+    <form id="composeMessageForm" action="{{ path('messages.compose', {'to' : composeForm.to.vars.value}) }}" method="post" {{ form_enctype(composeForm) }} novalidate="novalidate">
+        {{ form_widget(composeForm._token) }}
+        <div class="col-lg-6">
+            <div class="panel  {% if form_errors(composeForm.title) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading">{{ form_label(composeForm.title) }}</div>
+                <div class="panel-body">
+                    {{ form_widget(composeForm.title) }}
+                    {% if not composeForm.title.vars.valid %}
+                        {% for error in composeForm.title.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel  {% if form_errors(composeForm.to) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading">{{ form_label(composeForm.to) }}</div>
+                <div class="panel-body">
+                    {{ form_widget(composeForm.to) }}
+                    {% if not composeForm.to.vars.valid %}
+                        {% for error in composeForm.to.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="panel  {% if form_errors(composeForm.content) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading">{{ form_label(composeForm.content) }}</div>
+                <div class="panel-body">
+                    {{ form_widget(composeForm.content) }}
+                    {% if not composeForm.content.vars.valid %}
+                        {% for error in composeForm.content.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block SideNavigation %}
+    <li><a href="#" onclick="document.forms['composeMessageForm'].submit();"><i class="fa fa-send fa-fw"></i> {{ 'Send' |trans }}</a></li>
+    <li><a href="{{ path('admin.tool.overview') }}"><i class="fa fa-times fa-fw"></i> {{ 'Cancel' |trans }}</a></li>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ app.request.baseUrl }}/assets/tinymce/tinymce.min.js"></script>
+<script>tinymce.init({
+        theme : 'modern',
+        skin: 'light',
+        selector:'textarea',
+        statusbar : false,
+        menubar: false
+    });</script>
+<script>
+    {% endblock %}

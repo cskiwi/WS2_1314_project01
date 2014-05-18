@@ -128,7 +128,7 @@ class Tool implements ControllerProviderInterface {
                         'price' =>  $data['price']
                     ));
 
-                    // get iD
+                    // get ID
                     $id = $app['db.tools']->lastID();
 
                     // insert keywords
@@ -144,7 +144,7 @@ class Tool implements ControllerProviderInterface {
                     }
 
                     // redirect
-                    return $app->redirect($app['url_generator']->generate('tool.detail', array('id' => $id)));
+                    return $app->redirect($app['url_generator']->generate('tool.detail', array('toolId' => $id)));
                 }
             }
         }
@@ -157,11 +157,11 @@ class Tool implements ControllerProviderInterface {
     }
 
     public function edit(Application $app, $toolId) {
-        // Fetch toolpost with given $toolPostId and logged in user Id
-        $toolpost = $app['db.tools']->findForUser($toolId, $app['session']->get('user')['id']);
+        // Fetch tool with given $toolPostId and logged in user Id
+        $tool = $app['db.tools']->findForUser($toolId, $app['session']->get('user')['id']);
 
         // Redirect to overview if it does not exist
-        if ($toolpost === false) {
+        if ($tool === false) {
             return $app->redirect($app['url_generator']->generate('admin.tool.overview'));
         }
         $images = @scandir('files/'. $toolId);
@@ -171,28 +171,44 @@ class Tool implements ControllerProviderInterface {
             $images = array(); // empty fix
         }
 
-        // Build the form with the toolpost data as default values
-        $editform = $app['form.factory']
-            ->createNamed('editform', 'form', $toolpost)
+        // Build the form with the tool data as default values
+        $editForm = $app['form.factory']
+            ->createNamed('editForm', 'form', $tool)
             ->add('title', 'text', array(
                 'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 5))),
                 'attr' => array(
-                    'class' => 'form-control',
+                    'placeholder' => 'Enter a good title'
                 )
             ))
-            ->add('content', 'textarea', array(
-                'constraints' => array(new Assert\NotBlank()),
+            ->add('price', 'text', array(
+                'constraints' => array(new Assert\Range(array('min' => 0, 'max' => '500'))),
                 'attr' => array(
-                    'class' => 'form-control',
+                    'placeholder' => 'Enter a price (or leave blank when free)',
+                    'input_group' => array('prepend' => '@', 'size' => 'large')
+                ),
+            ))
+            ->add('content', 'textarea', array(
+                'constraints' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 5))),
+                'attr' => array(
+                    'placeholder' => 'Enter some good content',
                     'rows' => 10
                 )
             ))
             ->add('images', 'file', array(
                 'attr' => array(
-                    'class' => 'form-control',
                     'multiple' => 'multiple',
                     'accept' => 'image/*'
                 )
+            ))
+            ->add('tags', 'collection', array(
+                'type'   => 'text',
+                'allow_add' => true,
+                'allow_delete' => true,
+                'options'  => array(
+                    'attr' => array(
+                        'placeholder' => 'Tag'
+                    )
+                ),
             ))
             ->add('delete', 'choice', array(
                 'choices' => $images,
@@ -202,22 +218,23 @@ class Tool implements ControllerProviderInterface {
 
         // Form was submitted: process it
         if ('POST' == $app['request']->getMethod()) {
-            $editform->bind($app['request']);
+            $editForm->bind($app['request']);
+
 
             // Form is valid
-            if ($editform->isValid()) {
+            if ($editForm->isValid()) {
 
-                $data = $editform->getData();
-                $files = $app['request']->files->get($editform->getName());
+                $data = $editForm->getData();
+                $files = $app['request']->files->get($editForm->getName());
                 unset ($data['images']);
 
                 foreach ($files['images'] as $image){
                     // Uploaded file must be `.jpg`!
                     if (isset($image) && ('.jpg' == substr($image->getClientOriginalName(), -4))) {
                         // Move it to its new location
-                        $image->move($app['cms.base_path'] . $toolId, time().'-'. $image->getClientOriginalName());
+                        $image->move($app['rmt.base_path'] . $toolId, time().'-'. $image->getClientOriginalName());
                     } else {
-                        $editform->get('images')->addError(new \Symfony\Component\Form\FormError('Only .jpg allowed'));
+                        $editForm->get('images')->addError(new \Symfony\Component\Form\FormError('Only .jpg allowed'));
                     }
                 }
 
@@ -226,22 +243,26 @@ class Tool implements ControllerProviderInterface {
                         unlink('files/' . $toolId . '/' . $images[$picture]);
                     }
                 }
-                unset($data['photo']);
+
                 unset($data['delete']);
 
                 // Update data in DB
-                $app['db.tools']->update($data, array('id' => $toolId));
+                $app['db.tools']->update([
+                    'title' =>  $data['title'],
+                    'content' =>  $data['content'],
+                    'price' =>  $data['price']
+                ], array('id' => $toolId));
 
                 // Redirect to overview
-                return $app->redirect($app['url_generator']->generate('admin.tool.overview') . '?feedback=edited');
+                return $app->redirect($app['url_generator']->generate('tool.detail', ['toolId' => $toolId]) . '?feedback=edited');
             }
         }
 
 
         // Render the template with the form
         return $app['twig']->render('admin/tool/edit.twig', array(
-            'tool' => $toolpost,
-            'editform' => $editform->createView(),
+            'tool' => $tool,
+            'editForm' => $editForm->createView(),
         ));
 
     }

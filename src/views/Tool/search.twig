@@ -4,257 +4,68 @@
 {% set subTitle = 'Search'|trans %}
 
 {% block content %}
-    <div class="col-lg-6">
+    <div class="col-lg-12">
         <div class="panel panel-default">
-            <div class="panel-heading">{{ 'List' |trans }}</div>
+            <div class="panel-heading">{{ 'Search result' |trans }}</div>
             <div class="panel-body">
-                <ul class="tool-list">
-                    {% if search_result[1] is defined %}
-                        {% for result in search_result %}
-                            {% if result %}
-                                <li>
-                                    <div>
-                                        <strong>{{ result.username }}</strong>
-                                    </div>
-                                    {% for tool in result.tools %}
-                                        {% if tool %}
-                                            <div>
-                                                <a href="{{ path('tool.detail', {'id': tool.id}) }}">{{ tool.title}}</a>
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                </li>
-                            {% endif %}
-                        {% endfor %}
+                {% if search_result %}
+                    {% for result in search_result  %}
+                        <a href="{{ path('tool.detail', { 'toolId':  result.id }) }}" class="list-group-item">
+                            <strong><span class="name">{{  result.username }}</span></strong> has <span class="">{{ result.title |slice(0, 20) |striptags}}</span>
+                            <span class="text-muted">- {{ result.content |slice(0, 50) |striptags  }}</span>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <div>No tools found!</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% set prevPage = curPage - 1 %}
+        {% set nextPage = curPage + 1 %}
+        {% set currentPath = app.request.getBaseUrl ~ app.request.getPathInfo %}
+        
+        {% if numPages > 1 %}
+            <div class="text-center">
+                <ul class="pagination pagination-sm">
+
+                    {% if curPage > 1 %}
+                        <li class="previousPage"><a href="{{ currentPath }}?q={{ searchQuerry }}&p={{ prevPage }}" data-p="{{ prevPage }}">< Previous</a></li>
                     {% else %}
-                        <li>
-                            No tools found!
-                        </li>
+                        <li class="previousPage disabled"><span>< Previous</span></li>
                     {% endif %}
+
+                    {% for page in pagination %}
+                        <li {% if page == curPage %} class="active"{% endif %}{% if page == '...' %} class="disabled"{% endif %}>
+                            {% if page == curPage %}
+                                <span>{{ page }}</span>
+                            {% elseif page == '...' %}
+                                <span>…</span>
+                            {% else %}
+                                <a href="{{ currentPath }}?q={{ searchQuerry }}&p={{ page }}" data-p="{{ page }}">{{ page }}</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+
+                    {% if curPage < numPages %}
+                        <li class="nextPage"><a href="{{ currentPath }}?q={{ searchQuerry }}&p={{ nextPage }}" data-p="{{ nextPage }}">Next ></a></li>
+                    {% else %}
+                        <li class="nextPage disabled"><span>Next ></span></li>
+                    {% endif %}
+
                 </ul>
-            </div>
-        </div>
-    </div>
 
-    <div class="col-lg-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">{{ 'Map' | trans }}</div>
-            <div class="panel-body">
-                <div class="map-canvas"></div>
+                <p class="text-muted">
+                    <em>{{ numItems }} items</em>
+                </p>
             </div>
-        </div>
+        {% endif %}
     </div>
-
 {% endblock %}
 
 
-{% block scripts %}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCNaAQihXjwRVhv5i9afWEjm61lqgjY9Uk&sensor=true"></script>
-    <script src="{{ app.request.baseUrl }}/assets/layout/js/markerclusterer_compiled.js"></script>
-
-    <script>
-
-        var styleOptions = [{
-            "featureType": "water",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 17
-            }]
-        }, {
-            "featureType": "landscape",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 20
-            }]
-        }, {
-            "featureType": "road.highway",
-            "elementType": "geometry.fill",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 17
-            }]
-        }, {
-            "featureType": "road.highway",
-            "elementType": "geometry.stroke",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 29
-            }, {
-                "weight": 0.2
-            }]
-        }, {
-            "featureType": "road.arterial",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 18
-            }]
-        }, {
-            "featureType": "road.local",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 16
-            }]
-        }, {
-            "featureType": "poi",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 21
-            }]
-        }, {
-            "elementType": "labels.text.stroke",
-            "stylers": [{
-                "visibility": "on"
-            }, {
-                "color": "#000000"
-            }, {
-                "lightness": 16
-            }]
-        }, {
-            "elementType": "labels.text.fill",
-            "stylers": [{
-                "saturation": 36
-            }, {
-                "color": "#000000"
-            }, {
-                "lightness": 40
-            }]
-        }, {
-            "elementType": "labels.icon",
-            "stylers": [{
-                "visibility": "off"
-            }]
-        }, {
-            "featureType": "transit",
-            "elementType": "geometry",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 19
-            }]
-        }, {
-            "featureType": "administrative",
-            "elementType": "geometry.fill",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 20
-            }]
-        }, {
-            "featureType": "administrative",
-            "elementType": "geometry.stroke",
-            "stylers": [{
-                "color": "#000000"
-            }, {
-                "lightness": 17
-            }, {
-                "weight": 1.2
-            }]
-        }];
-    </script>
-    <script>
-        console.log({{ search_result|json_encode|raw }});
-
-        var geocoder;
-        var map;
-        var markers = [];
-
-        function initialize() {
-            getLocation();
-        }
-        google.maps.event.addDomListener(window, 'load', initialize);
-
-        function getLocation(){
-            if(navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(success, error);
-            } else {
-                // default location
-            }
-        }
-
-        function success(position){
-            geocoder = new google.maps.Geocoder();
-            var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
-            var mapOptions = {
-                center: latlng,
-                zoom: 10,
-                disableDefaultUI: true,
-                styles:styleOptions
-            };
-            map = new google.maps.Map(document.getElementById("map-canvas"),mapOptions);
-
-            var user = [];
-            user = {{ search_result|json_encode|raw }};
-            console.log(user);
-            for (var i = 0; i < user.length; i++) {
-                if ('address1' in user[i] && 'zipPostal' in user[i]&& 'cityTown' in user[i]&& 'country' in user[i]){
-                    var last = i == user.length-1;
-                    addToolLocation(user[i], last);
-                }
-            }
-        }
-
-        function error(msg){
-            console.log('error');
-            console.log('error');
-            if (msg.code == 1) {
-                //PERMISSION_DENIED
-            } else if (msg.code == 2) {
-                //POSITION_UNAVAILABLE
-            } else {
-            }   //TIMEOUT
-        }
-
-        function addToolLocation(user, last) {
-            var address = user.address1 + ', ' + user.zipPostal + ' ' + user.cityTown + ', ' + user.country;
-
-            var contentString = '' +
-                    '<div id="content">'+
-                    '<div class="siteNotice">Offers by: <strong>'+ (user.name ? user.name : user.username) + '</strong></div>'+
-                    '<div id="bodyContent"><ul>';
-            for (var i = 0; i < user.tools.length; i++) {
-                var offer = user.tools[i];
-                contentString += ('<li> <a href="{{ path('tool.detail', { 'id':  0 }) }}">' + offer.title + '</a></li>').replace("0", offer.id);
-            }
-
-            contentString += '</ul></div>';
-            var infowindow = new google.maps.InfoWindow({
-                content: contentString
-            });
-
-            geocoder.geocode( { 'address': address}, function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    var marker = new google.maps.Marker({
-                        position: results[0].geometry.location,
-                        title: user.name
-                    });
-
-                    google.maps.event.addListener(marker, 'click', function() {
-                        infowindow.open(map,marker);
-                    });
-
-                    markers.push(marker);
-
-                    if (last){
-                        markerCluster = new MarkerClusterer(map, markers);
-                    }
-                } else {
-                    console.log("Geocode was not successful for the following reason: " + status);
-                }
-            });
-        }
-
-    </script>
+{% block SideNavigation %}
+<li><a href="#"><i class="fa fa-pencil fa-fw"></i> {{ 'Filter' |trans }}</a></li>
 {% endblock %}
+
+

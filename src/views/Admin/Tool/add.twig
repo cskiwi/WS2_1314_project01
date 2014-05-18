@@ -5,89 +5,97 @@
 {% set subTitle = 'Add Tool' %}
 
 {% block content %}
-            <div class="col-sm-9 col-md-9">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Add Tool</h3>
-                    </div>
-                    <div class="panel-body">
+    <form id="addToolForm" action="{{ path('admin.tool.add') }}" method="post" {{ form_enctype(addForm) }} novalidate="novalidate">
+        {{ form_widget(addForm._token) }}
 
-
-                        {% if canAdd == false %}
-                            <div class="alert alert-danger">You have to have an address in order to add tools <br/> please add one in <a href="{{ path('admin.settings', {'type':'address'}) }}">address settings</a> </div>
-                        {% endif %}
-                        <form id="addToolForm" action="{{ path('admin.tool.add') }}" method="post" {{ form_enctype(addForm) }} novalidate="novalidate" dis>
-                            <!-- Token -->
-                            {{ form_widget(addForm._token) }}
-
-
-                            <div class="form-group{% if not addForm.title.vars.valid %}form-group has-error{% endif %}">
-                                {{ form_label(addForm.title) }}
-                                {{ form_widget(addForm.title) }}
-                                {% if not addForm.title.vars.valid %}
-                                    {% for error in addForm.title.vars.errors %}
-                                        <small>{{ error.message|trans|capitalize }}</small>
-                                    {% endfor %}
-                                {% endif %}
-                            </div>
-
-                            <div class="form-group{% if not addForm.content.vars.valid %}form-group has-error{% endif %}">
-                                {{ form_label(addForm.content) }}
-                                {{ form_widget(addForm.content) }}
-                                {% if not addForm.content.vars.valid %}
-                                    {% for error in addForm.content.vars.errors %}
-                                        <small>{{ error.message|trans|capitalize }}</small>
-                                    {% endfor %}
-                                {% endif %}
-                            </div>
-                            <div class="form-group{% if not addForm.price.vars.valid %}form-group has-error{% endif %}">
-                                {{ form_label(addForm.price) }}  / {{ 'Day' | trans }}
-                                {{ form_widget(addForm.price)}}
-                                {% if not addForm.price.vars.valid %}
-                                    {% for error in addForm.price.vars.errors %}
-                                        <small>{{ error.message|trans|capitalize }}</small>
-                                    {% endfor %}
-                                {% endif %}
-                            </div>
-
-                            <div class="form-group{% if not addForm.images.vars.valid %}form-group has-error{% endif %}">
-                                {{ form_label(addForm.images) }}
-                                {{ form_widget(addForm.images, { 'full_name': addForm.images.vars.full_name ~ '[]'} ) }}
-                                {% if not addForm.images.vars.valid %}
-                                    {% for error in addForm.images.vars.errors %}
-                                        <small>{{ error.message|trans|capitalize }}</small>
-                                    {% endfor %}
-                                {% endif %}
-                            </div>
-
-
-                            <div class="form-group">
-                                {{ form_label(addForm.tags) }}
-                                <ul class="tags" data-prototype="{{ form_widget(addForm.tags.vars.prototype)|e }}">
-                                    {% for tag in addForm.tags %}
-                                        <li class="tag {% if form_errors(tag) %}has-error error {% endif %}">
-                                            <div class="input-group">
-                                                {{ form_widget(tag) }}
-                                            </div>
-                                            {% if not tag.vars.valid %}
-                                                {% for error in tag.vars.errors %}
-                                                    <small>{{ error.message|trans|capitalize }}</small>
-                                                {% endfor %}
-                                            {% endif %}
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-
-                            <div class="form-group">
-                                <button id="submit" name="submit" class="btn btn-info">{{ 'Add' | trans }}</button>
-                            </div>
-                        </form>
-
-                    </div>
+        <div class="col-lg-12">
+            <div class="panel  {% if form_errors(addForm.title) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading">{{ form_label(addForm.title) }}</div>
+                <div class="panel-body">
+                    {{ form_widget(addForm.title) }}
+                    {% if not addForm.title.vars.valid %}
+                        {% for error in title.content.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="panel  {% if form_errors(addForm.content) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading">{{ form_label(addForm.content) }}</div>
+                <div class="panel-body ">
+                    {{ form_widget(addForm.content) }}
+                    {% if not addForm.content.vars.valid %}
+                        {% for error in addForm.content.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="panel  {% if form_errors(addForm.tags) %}panel-danger{% else %}panel-default{% endif %}">
+
+                <div class="panel-heading">{{ form_label(addForm.tags) }}</div>
+                <div class="panel-body">
+                    <ul class="tags" data-prototype="{{ form_widget(addForm.tags.vars.prototype)|e }}">
+                        {% for tag in addForm.tags %}
+                            <li class="tag {% if form_errors(tag) %}panel-danger{% endif %}">
+                                <div class="input-group">
+                                    {{ form_widget(tag) }}
+                                </div>
+                                {% if not tag.vars.valid %}
+                                    {% for error in tag.vars.errors %}
+                                        <small>{{ error.message|trans|capitalize }}</small>
+                                    {% endfor %}
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="panel  {% if form_errors(addForm.price) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading"> {{ form_label(addForm.price) }}  / {{ 'Day' | trans }}</div>
+                <div class="panel-body">
+                    {{ form_widget(addForm.price)}}
+                    {% if not addForm.price.vars.valid %}
+                        {% for error in addForm.price.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="panel  {% if form_errors(addForm.images) %}panel-danger{% else %}panel-default{% endif %}">
+                <div class="panel-heading">{{ form_label(addForm.images) }}</div>
+                <div class="panel-body">
+                    {{ form_widget(addForm.images, { 'full_name': addForm.images.vars.full_name ~ '[]'} ) }}
+                    {% if not addForm.images.vars.valid %}
+                        {% for error in addForm.images.vars.errors %}
+                            <small>{{ error.message|trans|capitalize }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </form>
 {% endblock %}
+
+{% block SideNavigation %}
+    <li><a href="#" onclick="document.forms['addToolForm'].submit();"><i class="fa fa-save fa-fw"></i> {{ 'Save' |trans }}</a></li>
+    <li><a href="{{ path('admin.tool.overview') }}"><i class="fa fa-times fa-fw"></i> {{ 'Cancel' |trans }}</a></li>
+{% endblock %}
+
+
 {% block scripts %}
     <script src="{{ app.request.baseUrl }}/assets/tinymce/tinymce.min.js"></script>
     <script>tinymce.init({
