@@ -155,7 +155,6 @@ class Tool implements ControllerProviderInterface {
 
 
     }
-
     public function edit(Application $app, $toolId) {
         // Fetch tool with given $toolPostId and logged in user Id
         $tool = $app['db.tools']->findForUser($toolId, $app['session']->get('user')['id']);
@@ -266,8 +265,6 @@ class Tool implements ControllerProviderInterface {
         ));
 
     }
-
-
     public function delete(Application $app, $toolId) {
 
         // Fetch toolpost with given $toolPostId and logged in user Id

@@ -9,7 +9,7 @@ class Messaging extends \Knp\Repository {
     }
 
     public function findInbox($userId){
-        return $this->db->fetchAll('SELECT messages.*, users.username, users.id as userId FROM '. $this->getTableName() . ' INNER JOIN users ON messages.to_user = users.id  WHERE to_user = ? ', array($userId));
+        return $this->db->fetchAll('SELECT messages.*, users.username, users.id as userId FROM '. $this->getTableName() . ' INNER JOIN users ON messages.to_user = users.id  WHERE to_user = ? ORDER BY date_send DESC', array($userId));
     }
 
     public function countUnread($userId){

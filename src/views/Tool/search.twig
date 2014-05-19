@@ -8,23 +8,37 @@
         <div class="panel panel-default">
             <div class="panel-heading">{{ 'Search result' |trans }}</div>
             <div class="panel-body">
-                {% if search_result %}
-                    {% for result in search_result  %}
-                        <a href="{{ path('tool.detail', { 'toolId':  result.id }) }}" class="list-group-item">
-                            <strong><span class="name">{{  result.username }}</span></strong> has <span class="">{{ result.title |slice(0, 20) |striptags}}</span>
-                            <span class="text-muted">- {{ result.content |slice(0, 50) |striptags  }}</span>
-                        </a>
-                    {% endfor %}
-                {% else %}
-                    <div>No tools found!</div>
-                {% endif %}
+                <div class="row">
+
+                    {% if search_result %}
+                        {% for result in search_result  %}
+                            <div class="col-md-4">
+                                <div class="thumbnail">
+                                    {% if result.images is defined %}
+                                        <img src="{{ app.request.baseUrl }}{{ app['rmt.base_url'] }}/{{ result.id}}/{{ result.images[0] }}" alt="{{ result.title|striptags }}">
+                                    {% else %}
+                                        <img src="http://placehold.it/150x150" alt="{{ result.title|striptags }}">
+                                    {% endif %}
+                                    <div class="caption">
+                                        <h3>{{ result.title |striptags}}</h3>
+                                        <p>{{ result.content |slice(0, 200) |striptags  }}</p>
+                                        <p class="text-center"><a href="{{ path('tool.detail', { 'toolId':  result.id }) }}" class="btn btn-default" role="button">Moar details</a> <a href="#" class="btn btn-primary" role="button">Rent for {% if result.price %}{{ result.price }} a Day {% else %} free {% endif %}</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div>No tools found!</div>
+                    {% endif %}
+                </div>
+
             </div>
         </div>
 
         {% set prevPage = curPage - 1 %}
         {% set nextPage = curPage + 1 %}
         {% set currentPath = app.request.getBaseUrl ~ app.request.getPathInfo %}
-        
+
         {% if numPages > 1 %}
             <div class="text-center">
                 <ul class="pagination pagination-sm">
@@ -65,7 +79,7 @@
 
 
 {% block SideNavigation %}
-<li><a href="#"><i class="fa fa-pencil fa-fw"></i> {{ 'Filter' |trans }}</a></li>
+    <li><a href="#"><i class="fa fa-pencil fa-fw"></i> {{ 'Filter' |trans }}</a></li>
 {% endblock %}
 
 

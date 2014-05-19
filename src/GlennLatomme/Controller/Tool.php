@@ -53,14 +53,20 @@ class Tool implements ControllerProviderInterface {
 
         $data = $request->get('q');
         $user = $app['db.users']->find($app['session']->get('user')['id']);
-        $search_result = "";
+        $search_result = null;
         $numItemsPerPage = 10;
 
         $curPage = max(1, (int) $request->query->get('p'));
 
         if ($data){
             $search_result = $app['db.tools']->search(explode(" ", $data));
+            for($i = 0; $i<sizeof($search_result); $i++){
+                foreach(glob($app['rmt.base_path'] . $search_result[$i]['id'] .DIRECTORY_SEPARATOR. "*.{jpg,JPG,jpeg,JPEG,png,PNG}",GLOB_BRACE) as $image) {
+                    $search_result[$i]['images'][]= basename($image);
+                }
+            }
         }
+
 
         $numItems = count($search_result);
         $numPages = ceil($numItems / $numItemsPerPage);

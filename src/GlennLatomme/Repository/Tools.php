@@ -32,7 +32,7 @@ class Tools extends Repository {
     }
     public function search($tags){
         $query =
-            'SELECT DISTINCT tools.id, tools.content, tools.title, users.username FROM tools ' .
+            'SELECT DISTINCT tools.id, tools.content, tools.title, tools.price, users.username FROM tools ' .
             'INNER JOIN key_for_tools on key_for_tools.tools_id = tools.id ' .
             'INNER JOIN keywords on key_for_tools.key_id = keywords.id ' .
             'INNER JOIN users on users.id = tools.user_id ' .
@@ -68,19 +68,8 @@ class Tools extends Repository {
         return $resultSet;
     }
 
-    function multidimensional_search($parents, $searched) {
-        if (empty($searched) || empty($parents)) {
-            return false;
-        }
+    public function countTools(){
+        return $this->db->fetchAssoc('SELECT count(*) FROM '. $this->getTableName());
 
-        foreach ($parents as $key => $value) {
-            $exists = true;
-            foreach ($searched as $skey => $svalue) {
-                $exists = ($exists && IsSet($parents[$key][$skey]) && $parents[$key][$skey] == $svalue);
-            }
-            if($exists){ return $key; }
-        }
-
-        return false;
     }
 }

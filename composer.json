@@ -10,6 +10,7 @@
         "symfony/yaml": "dev-master",
         "symfony/translation": "dev-master",
         "knplabs/repository-service-provider": "dev-master",
+        "swiftmailer/swiftmailer": "dev-master",
         "braincrafted/bootstrap-bundle": "~2.0"
     },
     "autoload": {

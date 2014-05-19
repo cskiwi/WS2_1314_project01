@@ -38,7 +38,11 @@
                     <p>Free!</p>
                 {% endif %}
 
-                <button class="btn btn-default">Rent!</button>
+                {% if app.session.get('user') %}
+                <button class="btn btn-primary">Rent!</button>
+                {% else %}
+                <p><a href="{{ path('auth.login') }}">Login</a> and rent this tool!</p>
+                {% endif %}
             </div>
         </div>
     </div>

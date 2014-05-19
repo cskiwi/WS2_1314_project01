@@ -1,0 +1,14 @@
+{% extends 'Mail/layout.twig' %}
+{% set pageTitle = 'Register' |trans%}
+{% set subTitle = 'Register' |trans %}
+
+{% block content %}
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Welcome'|trans }} {{ name }}</div>
+            <div class="panel-body">
+                <p>{{ 'signup_message' |trans }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

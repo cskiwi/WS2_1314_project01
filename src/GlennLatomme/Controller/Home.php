@@ -23,7 +23,8 @@ class Home implements ControllerProviderInterface {
     }
 
     public function index(Application $app){
-        return $app['twig']->render('landing.twig');
+        $toolCount = $app['db.tools']->countTools()['count(*)'];
+        return $app['twig']->render('landing.twig', ['toolCount' => $toolCount]);
     }
 
 

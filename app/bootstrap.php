@@ -7,6 +7,11 @@ use Symfony\Component\Translation\Loader\YamlFileLoader;
 $app = new Silex\Application();
 
 $app['debug'] = true;
+$app->register(new Silex\Provider\UrlGeneratorServiceProvider());
+$app->register(new Silex\Provider\SessionServiceProvider());
+$app->register(new Silex\Provider\ValidatorServiceProvider());
+$app->register(new Silex\Provider\FormServiceProvider());
+$app->register(new Silex\Provider\SwiftmailerServiceProvider());
 
 $app->register(new Silex\Provider\TranslationServiceProvider(), array(
     'locale_fallback' => 'en',
@@ -36,12 +41,19 @@ $app->register(new Knp\Provider\RepositoryServiceProvider(), array(
     )
 ));
 
-// config
 $app['translator'] = $app->share($app->extend('translator', function($translator, $app) {
     $translator->addLoader('yaml', new YamlFileLoader());
     return $translator;
 }));
 
+$app['swiftmailer.options'] = array(
+    'host' => 'mail.latomme-g.be',
+    'port' => '587',
+    'username' => 'mailmaster@latomme-g.be',
+    'password' => 'mailmaster',
+    'encryption' => 'tls',
+    'auth_mode' => null
+);
 
 $app->before(function () use ($app) {
     foreach(glob(__DIR__ .  DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR  . '/locale/*') as $locale) {
@@ -58,7 +70,4 @@ $app['twig'] = $app->share($app->extend('twig', function($twig) {
     return $twig;
 }));
 
-$app->register(new Silex\Provider\UrlGeneratorServiceProvider());
-$app->register(new Silex\Provider\SessionServiceProvider());
-$app->register(new Silex\Provider\ValidatorServiceProvider());
-$app->register(new Silex\Provider\FormServiceProvider());
+

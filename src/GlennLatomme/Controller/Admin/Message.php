@@ -51,7 +51,6 @@ class Message implements ControllerProviderInterface {
             'messages' => $messages
         ]);
     }
-
     public function message(Application $app, $id){
         $user = $app['session']->get('user');
         if ($user) {
@@ -127,6 +126,7 @@ class Message implements ControllerProviderInterface {
                             'content' =>  $data['content'],
                             'date_send' => date('Y-m-d H:i:s')
                         ));
+
 
                         return $app->redirect($app['url_generator']->generate('messages'));
                     }

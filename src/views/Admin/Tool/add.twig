@@ -5,6 +5,13 @@
 {% set subTitle = 'Add Tool' %}
 
 {% block content %}
+
+    {% if canAdd == false %}
+        <div class="col-lg-12">
+            <div class="alert alert-danger">You have to have an address in order to add tools <br/> please add one in <a href="{{ path('admin.settings', {'type':'address'}) }}">address settings</a> </div>
+        </div>
+    {% endif %}
+
     <form id="addToolForm" action="{{ path('admin.tool.add') }}" method="post" {{ form_enctype(addForm) }} novalidate="novalidate">
         {{ form_widget(addForm._token) }}
 

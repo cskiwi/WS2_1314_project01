@@ -149,11 +149,23 @@ class Auth implements ControllerProviderInterface {
                         'id' => $app['db.users']->lastID(),
                         'username' => $data['username']
                     ));
+                    // messaging
+                    $message = \Swift_Message::newInstance()
+                        ->setSubject('Sign up message')
+                        ->setFrom(array('mailmaster@rmt.be'))
+                        ->setTo([$data['email']])
+                        ->setBody(
+                            $app['twig']->render(
+                                'Mail/signup.twig',
+                                array('name' => $data['username'])
+                            ), 'text/html'
+                        );
 
-
+                    $app['mailer']->send($message);
                 } else {
                     $registerForm->get('username')->addError(new \Symfony\Component\Form\FormError('Username Already exists'));
                 }
+
 
                 return $app->redirect($app['url_generator']->generate('index'));
             }
