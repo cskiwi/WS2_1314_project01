@@ -104,7 +104,7 @@ class Auth implements ControllerProviderInterface {
 
     public function register(Application $app){
         if ($app['session']->get('user')) {
-            return $app->redirect($app['url_generator']->generate('home'));
+            return $app->redirect($app['url_generator']->generate('index'));
         }
 
         // Create Form

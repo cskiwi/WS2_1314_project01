@@ -36,9 +36,13 @@ class Admin implements ControllerProviderInterface {
 
     }
     public function dashboard(Application $app) {
+        $user = $app['session']->get('user');
+        $tools = $app['db.tools']->findAllForUser($user['id'], 5);
+        $messages = $app['db.messages']->findInbox($user['id'], 5);
         // Render template
         return $app['twig']->render('admin/dashboard.twig', array(
-
+            'tools' => $tools,
+            'messages' => $messages
         ));
 
     }

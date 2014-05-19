@@ -4,6 +4,81 @@
 {% set subTitle = 'Overview' %}
 
 {% block content %}
-    <div class="col-lg-12">
+
+    <div class="col-lg-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Last updated tools' |trans }}</div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{{ 'Title' | trans  }}</th>
+                        <th>{{ 'Added on' | trans  }}</th>
+                        <th class="text-center">{{ 'Status' | trans  }}</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for tool in tools %}
+                        <tr>
+                            <td>{{ tool.id }}</td>
+                            <td><a href="{{ path('tool.detail', { 'toolId': tool.id}) }}">{{ tool.title }}</a></td>
+                            <td>{{ tool.date|date('Y-m-d H:i:s') }}</td>
+                            <td class="text-center"> {{ tool.status |trans }}</td>
+                            <td class="text-right">
+                                <form action="{{ path('admin.tool.delete', { 'toolId': tool.id}) }}" method="post" class="delete">
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> {{ 'Delete' | trans  }}</button>
+                                </form>
+                            </td>
+                            <td class="text-right">
+                                <a href="{{ path('admin.tool.edit', { 'toolId': tool.id }) }}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> {{ 'Edit' | trans  }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-lg-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Last messages' |trans }}</div>
+            <div class="panel-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <li class="divider"></li>
+                        <li>
+                            <a href="{{ path('messages.detail', {'id':message.id} ) }}">
+                                <div>
+                                    <strong>{{ message.username }} {% if message.message_read  == false%} <span class="badge">new</span> {% endif %}</strong>
+                                        <span class="pull-right text-muted">
+                                            <em>{{ message.date_send | trans }}</em>
+                                        </span>
+                                </div>
+                                <div>{{ message.content| slice(0, 50) | striptags }}</div>
+                            </a>
+                        </li>
+                    {% endfor %}
+                    <li class="divider"></li>
+                    <li>
+                        <a class="text-center" href="{{ path('messages') }}">
+                            <strong>Read All Messages</strong>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="divider"></li>
+                    <li>
+                        <div class="text-center">
+                            <p>You have no messages!</p>
+                        </div>
+                    </li>
+                {% endif %}
+            </div>
+        </div>
+
     </div>
 {% endblock %}

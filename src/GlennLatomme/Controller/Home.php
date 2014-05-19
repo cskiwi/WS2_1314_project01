@@ -23,6 +23,9 @@ class Home implements ControllerProviderInterface {
     }
 
     public function index(Application $app){
+        if ($app['session']->get('user')){
+            return $app->redirect($app['url_generator']->generate('admin.dashboard'));
+        }
         $toolCount = $app['db.tools']->countTools()['count(*)'];
         return $app['twig']->render('landing.twig', ['toolCount' => $toolCount]);
     }

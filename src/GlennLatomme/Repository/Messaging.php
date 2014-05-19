@@ -8,8 +8,15 @@ class Messaging extends \Knp\Repository {
         return 'messages';
     }
 
-    public function findInbox($userId){
-        return $this->db->fetchAll('SELECT messages.*, users.username, users.id as userId FROM '. $this->getTableName() . ' INNER JOIN users ON messages.to_user = users.id  WHERE to_user = ? ORDER BY date_send DESC', array($userId));
+    public function findInbox($userId, $amount = PHP_INT_MAX){
+        return $this->db->fetchAll('
+        SELECT messages.*, users.username, users.id as userId
+        FROM '. $this->getTableName() . '
+        INNER JOIN users ON messages.to_user = users.id
+        WHERE to_user = ?
+        ORDER BY date_send DESC
+        LIMIT ' . $amount
+        , array($userId));
     }
 
     public function countUnread($userId){

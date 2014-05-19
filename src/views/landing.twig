@@ -11,15 +11,31 @@
                <p>Welcome, <br />
                Here at <strong>{{ 'name'|trans }}</strong> we try to connect the people with tools and give them an oppertunity to share them with others who might need it for one day</p>
 
-                <p>at this moment we have <strong>{{ toolCount }}</strong> tools to offer for you!</p>
+                <p>At this moment we have <strong>{{ toolCount }}</strong> tools to offer for you!</p>
+                <p>Feel free to sign up and rent or offer yourself!</p>
             </div>
         </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Search' |trans }}</div>
+            <div class="panel-body">
+
+            </div>
+        </div>
+
     </div>
     <div class="col-lg-3">
         <div class="panel panel-default">
             <div class="panel-heading">{{ 'Language' |trans }}</div>
             <div class="panel-body">
                 {{ 'Current language'|trans }}: <strong>{{ 'locale_lang'|trans}}</strong>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Login' |trans }}</div>
+            <div class="panel-body">
+                <a href="{{ path('auth.login') }}" class="btn btn-default" role="button">{{ 'Login'|trans }}</a>  or  <a href="{{ path('auth.register') }}" class="btn btn-default" role="button">{{ 'Register'|trans }}</a>
+                <p>I'ts free!</p>
             </div>
         </div>
     </div>

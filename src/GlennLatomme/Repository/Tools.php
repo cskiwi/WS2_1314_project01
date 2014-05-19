@@ -23,8 +23,16 @@ class Tools extends Repository {
         return $this->db->fetchAll('SELECT '. $this->getTableName(). '.*, users.name from '. $this->getTableName(). ' INNER JOIN users ON '. $this->getTableName(). '.user_id = users.id');
     }
 
-    public function findAllForUser($userId) {
-        return $this->db->fetchAll('SELECT '. $this->getTableName(). '.*, users.name from '. $this->getTableName(). ' INNER JOIN users ON '. $this->getTableName(). '.user_id = users.id WHERE user_id = ? ORDER BY id DESC', array($userId));
+    public function findAllForUser($userId, $amount = PHP_INT_MAX) {
+        return $this->db->fetchAll('
+        SELECT '. $this->getTableName(). '.*, users.name
+        from '. $this->getTableName(). '
+        INNER JOIN users ON '. $this->getTableName(). '.user_id = users.id
+        WHERE user_id = ?
+        ORDER BY date DESC
+        LIMIT ' . $amount,
+            array($userId)
+        );
     }
 
     public function lastID(){
