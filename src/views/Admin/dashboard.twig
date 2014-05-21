@@ -1,20 +1,20 @@
 {% extends 'layout.twig' %}
 
 {% set pageTitle = 'Overview' %}
-{% set subTitle = 'Overview' %}
+{% set subTitle = 'Dashboard' %}
 
 {% block content %}
 
     <div class="col-lg-8">
         <div class="panel panel-default">
-            <div class="panel-heading">{{ 'Last updated tools' |trans }}</div>
+            <div class="panel-heading">{{ 'Last updated tools' |trans }}  <span class="fa fa-angle-right">  </span> <a class="text-center" href="{{ path('admin.tool.overview') }}"> View all</a></div>
             <div class="panel-body">
                 <table class="table">
                     <thead>
                     <tr>
                         <th>#</th>
                         <th>{{ 'Title' | trans  }}</th>
-                        <th>{{ 'Added on' | trans  }}</th>
+                        <th>{{ 'Updated on' | trans  }}</th>
                         <th class="text-center">{{ 'Status' | trans  }}</th>
                         <th></th>
                         <th></th>
@@ -25,15 +25,16 @@
                         <tr>
                             <td>{{ tool.id }}</td>
                             <td><a href="{{ path('tool.detail', { 'toolId': tool.id}) }}">{{ tool.title }}</a></td>
-                            <td>{{ tool.date|date('Y-m-d H:i:s') }}</td>
+                            <td>{{ tool.date|date('Y-m-d') }}</td>
                             <td class="text-center"> {{ tool.status |trans }}</td>
                             <td class="text-right">
+
                                 <form action="{{ path('admin.tool.delete', { 'toolId': tool.id}) }}" method="post" class="delete">
                                     <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> {{ 'Delete' | trans  }}</button>
                                 </form>
                             </td>
                             <td class="text-right">
-                                <a href="{{ path('admin.tool.edit', { 'toolId': tool.id }) }}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> {{ 'Edit' | trans  }}</a>
+                                <a href="{{ path('admin.tool.edit', { 'toolId':  tool.id }) }}" class="btn btn-primary" role="button"><i class="fa fa-pencil"></i> {{ 'Edit' | trans  }}</a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -45,7 +46,7 @@
     </div>
     <div class="col-lg-4">
         <div class="panel panel-default">
-            <div class="panel-heading">{{ 'Last messages' |trans }}</div>
+            <div class="panel-heading">{{ 'Last messages' |trans }}  <span class="fa fa-angle-right">  </span> <a class="text-center" href="{{ path('messages') }}"> View all</a></div>
             <div class="panel-body">
                 {% if messages %}
                     {% for message in messages %}
@@ -58,16 +59,13 @@
                                             <em>{{ message.date_send | trans }}</em>
                                         </span>
                                 </div>
-                                <div>{{ message.content| slice(0, 50) | striptags }}</div>
+                                <div>{{ message.title | striptags }}</div>
                             </a>
                         </li>
                     {% endfor %}
                     <li class="divider"></li>
                     <li>
-                        <a class="text-center" href="{{ path('messages') }}">
-                            <strong>Read All Messages</strong>
-                            <i class="fa fa-angle-right"></i>
-                        </a>
+
                     </li>
                 {% else %}
                     <li class="divider"></li>
@@ -77,6 +75,36 @@
                         </div>
                     </li>
                 {% endif %}
+            </div>
+        </div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Last reservations' |trans }}  <span class="fa fa-angle-right">  </span> <a class="text-center" href="{{ path('reservations') }}"> View all</a></div>
+            <div class="panel-body">
+                <ul >
+                {% if reservations %}
+                    {% for reservation in reservations %}
+                        <li class="divider"></li>
+                        <li class="alert">
+                            <div><strong>{{ reservation.username }}</strong>  wants to rent <a href="{{ path('tool.detail',{'toolId' : reservation.toolId}) }}">{{ reservation.title }}</a></div>
+                            <div>from: <strong>{{ reservation.start_date }}</strong> until <strong>{{ reservation.end_date }}</strong></div>
+                            <div><a href="{{ path('reservations.deny', { 'id':  reservation.id }) }}" class="btn btn-danger" role="button">{{ 'Deny' | trans  }}</a> <a href="{{ path('reservations.accept', { 'id':  reservation.id }) }}" class="btn btn-primary" role="button">{{ 'Accept' | trans  }}</a></div>
+                        </li>
+                    {% endfor %}
+                    <li class="divider"></li>
+                    <li>
+
+                    </li>
+                {% else %}
+                    <li class="divider"></li>
+                    <li>
+                        <div class="text-center">
+                            <p>You have no reservations!</p>
+                        </div>
+                    </li>
+                {% endif %}
+                </ul>
             </div>
         </div>
 

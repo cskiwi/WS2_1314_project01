@@ -19,20 +19,20 @@
 <body>
 <div id="wrapper">
 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ path('index') }}">{{ 'name'|trans }}</a>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{ path('index') }}">{{ 'name'|trans }}</a>
 
-        </div>
-        <!-- /.navbar-header -->
+    </div>
+    <!-- /.navbar-header -->
 
-        <ul class="navbar-top-links">
+    <ul class="navbar-top-links">
     <span class="nav navbar-left">
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -63,13 +63,14 @@
                             <li class="divider"></li>
                             <li>
                                 <a href="{{ path('messages.detail', {'id':message.id} ) }}">
-                                    <div>
+                                <div>
                                         <strong>{{ message.username }} {% if message.message_read  == false%} <span class="badge">new</span> {% endif %}</strong>
                                         <span class="pull-right text-muted">
                                             <em>{{ message.date_send | trans }}</em>
                                         </span>
                                     </div>
-                                    <div>{{ message.content| slice(0, 50) | striptags }}</div>
+
+                                <div>{{ message.title | striptags }}</div>
                                 </a>
                             </li>
                         {% endfor %}
@@ -90,7 +91,38 @@
                     {% endif %}
                 </ul>
             </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-bell fa-fw"></i> {% if app.session.get('reservationsWaiting') %}<span class="badge"> {{ app.session.get('reservationsWaiting') }} new</span>{% endif %} <i class="fa fa-caret-down"> </i>
+                </a>
+                <ul class="dropdown-menu dropdown-reservation">
+                    {% if app.session.get('reservations') %}
+                        {% for reservation in app.session.get('reservations') %}
+                            <li class="reservation">
+                                <div><strong>{{ reservation.username }}</strong> wants to rent <a href="{{ path('tool.detail',{'toolId' : reservation.toolId}) }}">{{ reservation.title }}</a></div>
+                                <div>from: <strong>{{ reservation.start_date }}</strong> until <strong>{{ reservation.end_date }}</strong></div>
+                                <div><a href="{{ path('reservations.deny', { 'id':  reservation.id }) }}" class="btn btn-danger" role="button">{{ 'Deny' | trans  }}</a> <a href="{{ path('reservations.accept', { 'id':  reservation.id }) }}" class="btn btn-primary" role="button">{{ 'Accept' | trans  }}</a></div>
+                            </li>
+                            <li class="divider"></li>
+                        {% endfor %}
+                    {% else %}
+                        <li>
+                            <div class="text-center">
+                                <p><strong>You have no reservations!</strong></p>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                    {% endif %}
+                    <li>
+                        <a class="text-center" href="{{ path('reservations') }}">
+                            <strong>See all reservations</strong>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
 
+                <!-- /.dropdown-reservation -->
+            </li>
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="fa fa-tasks fa-fw"></i>  <i class="fa fa-caret-down"></i>
@@ -155,47 +187,46 @@
 
         {% endif %}
     </span>
-        </ul>
+    </ul>
 
-        <div class="navbar-default navbar-static-side" role="navigation">
-            <div class="sidebar-collapse">
-                <ul class="nav" id="side-menu">
-                    <li class="sidebar-search">
-                        <form class="navbar-form" action="{{ path('tool.search') }}" method="get" role="search">
-                            <div class="input-group custom-search-form">
-                                <input type="text" class="  search-query form-control" placeholder="{{ 'Search' |trans }}..." name="q" {% if searchQuerry is defined %} value="{{ searchQuerry }}" {% endif %} />
+    <div class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="sidebar-search">
+                    <form class="navbar-form" action="{{ path('tool.search') }}" method="get" role="search">
+                        <div class="input-group custom-search-form">
+                            <input type="text" class="  search-query form-control" placeholder="{{ 'Search' |trans }}..." name="q" {% if searchQuerry is defined %} value="{{ searchQuerry }}" {% endif %} />
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">
                                 <i class="fa fa-search"></i>
                             </button>
                         </span>
-                            </div>
-                        </form>
-                        <!-- /input-group -->
-                    </li>
-                    {% block SideNavigation %}
-                    {% endblock %}
+                        </div>
 
-
-                </ul>
-            </div>
-
+                        {% block searchForm %} {% endblock %}
+                    </form>
+                    <!-- /input-group -->
+                </li>
+                {% block SideNavigation %} {% endblock %}
+            </ul>
         </div>
 
-    </nav>
-    <div id="page-wrapper">
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">{{ subTitle }}</h1>
-            </div>
-        </div>
-        <div class="container content">
-            <div class="row">
-                {% block content %}
-                {% endblock %}
-            </div>
+    </div>
+
+</nav>
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">{{ subTitle }}</h1>
         </div>
     </div>
+    <div class="container content">
+        <div class="row">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
 </div>
 
 

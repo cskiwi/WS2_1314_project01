@@ -122,6 +122,7 @@ class Tool implements ControllerProviderInterface {
 
                     // insert tool
                     $app['db.tools']->insert(array(
+                        'date' =>  gmdate("Y-m-d", time()),
                         'user_id'  => $user['id'],
                         'title' =>  htmlentities($data['title']),
                         'content' =>  $data['content'],
@@ -247,6 +248,7 @@ class Tool implements ControllerProviderInterface {
 
                 // Update data in DB
                 $app['db.tools']->update([
+                    'date' =>  gmdate("Y-m-d", time()),
                     'title' =>  $data['title'],
                     'content' =>  $data['content'],
                     'price' =>  $data['price']

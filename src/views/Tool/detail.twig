@@ -17,14 +17,21 @@
             <div class="panel-heading">{{ 'Images'|trans }}</div>
             <div class="panel-body">
                 {% if images %}
-                    {% for image in images %}
-                        <div class="col-sm-4">
-                            <img class="img-thumbnail img-responsive" src="{{ app.request.baseUrl }}/{{ app['rmt.base_url'] }}/{{ tool.id}}/{{ image }}"/>
-                        </div>
-                    {% endfor %}
-                {% else  %}
-                    <p>No images for this product</p>
+                    <div id="images-preview" class="carousel slide">
+                        <div class="carousel-inner">
+                            {% for image in images %}
+                                <div class="item">
+                                    <img src="{{ app.request.baseUrl }}/{{ app['rmt.base_url'] }}/{{ tool.id}}/{{ image }}" alt="" />
+                                </div>
+                            {% endfor %}
+                        </div><!-- /.carousel-inner -->
+                        <a class="carousel-control left" href="#images-preview" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                        <a class="carousel-control right" href="#images-preview" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                    </div><!-- /.carousel -->
+                {% else %}
+                    <p>No images</p>
                 {% endif %}
+
             </div>
         </div>
     </div>
@@ -39,9 +46,11 @@
                 {% endif %}
 
                 {% if app.session.get('user') %}
-                <button class="btn btn-primary">Rent!</button>
+                    {% if app.session.get('user')['id'] != tool.user_id %}
+                        <a href="{{ path('reservations.make', {'id' :  tool.id} ) }}" role="button" class="btn btn-primary">Rent!</a>
+                    {% endif %}
                 {% else %}
-                <p><a href="{{ path('auth.login') }}">Login</a> and rent this tool!</p>
+                    <p><a href="{{ path('auth.login') }}">Login</a> and rent this tool!</p>
                 {% endif %}
             </div>
         </div>
@@ -62,12 +71,22 @@
     <li><a href="#"><i class="fa fa-home fa-fw"></i> {{ 'Status'|trans }}: {{ tool.status |trans }}</a></li>
 
     {% if app.session.get('user')%}
-        <li><a href="{{ path('messages.compose', {'to' :  by.username} ) }}"><i class="fa fa-user fa-fw"></i> {{ 'Contact %user%'|trans({'%user%': by.username}) }}</a></li>
 
-        {% if app.session.get('user').id == tool.user_id %}
+        {% if app.session.get('user').id != tool.user_id %}
+            <li><a href="{{ path('messages.compose', {'to' :  by.username} ) }}"><i class="fa fa-user fa-fw"></i> {{ 'Contact %user%'|trans({'%user%': by.username}) }}</a></li>
+        {% else %}
             <li><a href="{{ path('admin.tool.delete', { 'toolId': tool.id}) }}"><i class="fa fa-trash-o fa-fw"></i> {{ 'Delete' |trans }}</a></li>
             <li><a href="{{ path('admin.tool.edit', { 'toolId': tool.id}) }}"><i class="fa fa-pencil fa-fw"></i> {{ 'Edit' |trans }}</a></li>
         {% endif %}
     {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        $('.item:first-child').addClass('active');
+        $(document).ready(function(){
+            $('.carousel').carousel();
+        });
+    </script>
 {% endblock %}
 

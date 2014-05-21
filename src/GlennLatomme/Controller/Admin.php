@@ -21,6 +21,7 @@ class Admin implements ControllerProviderInterface {
         // Mount Admin “Subcontrollers”
         $app->mount('/admin/tool/', new Admin\Tool());
         $app->mount('/admin/message/', new Admin\Message());
+        $app->mount('/admin/reservations/', new Admin\Reservation());
 
         // Redirect to blog dashboard if we hit /admin/
         $controllers
@@ -39,10 +40,12 @@ class Admin implements ControllerProviderInterface {
         $user = $app['session']->get('user');
         $tools = $app['db.tools']->findAllForUser($user['id'], 5);
         $messages = $app['db.messages']->findInbox($user['id'], 5);
+        $reservations = $app['db.reservations']->findAllForUser($app['session']->get('user')['id']);
         // Render template
         return $app['twig']->render('admin/dashboard.twig', array(
             'tools' => $tools,
-            'messages' => $messages
+            'messages' => $messages,
+            'reservations' => $reservations
         ));
 
     }

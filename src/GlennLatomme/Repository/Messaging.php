@@ -9,17 +9,24 @@ class Messaging extends \Knp\Repository {
     }
 
     public function findInbox($userId, $amount = PHP_INT_MAX){
-        return $this->db->fetchAll('
-        SELECT messages.*, users.username, users.id as userId
-        FROM '. $this->getTableName() . '
-        INNER JOIN users ON messages.to_user = users.id
-        WHERE to_user = ?
-        ORDER BY date_send DESC
-        LIMIT ' . $amount
-        , array($userId));
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('m.*','u.username', 'u.id as userId')
+            ->from($this->getTableName(), 'm')
+            ->innerJoin('m', 'users', 'u', 'm.to_user = u.id')
+            ->where('m.to_user = ?')
+            ->orderBy('m.date_send', 'DESC')
+            ->setMaxResults($amount);
+
+        return $this->db->fetchAll($queryBuilder->getSql(),array($userId));
     }
 
     public function countUnread($userId){
-        return $this->db->fetchAssoc('SELECT count(*) FROM '. $this->getTableName() . ' WHERE message_read = 0 AND to_user = ?', array($userId));
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('count(*)')
+            ->from($this->getTableName(), 'm')
+            ->where('m.to_user = ?')
+            ->andWhere('message_read = 0');
+
+        return $this->db->fetchAssoc($queryBuilder->getSql(),array($userId));
     }
 }

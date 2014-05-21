@@ -11,73 +11,75 @@ class Tools extends Repository {
     public function getTableName() {
         return 'tools';
     }
-    public function find($id) {
-        return $this->db->fetchAssoc('SELECT '. $this->getTableName(). '.* from '. $this->getTableName(). ' WHERE '. $this->getTableName(). '.id = ?', array($id));
-    }
 
     public function findForUser($id, $userId) {
-        return $this->db->fetchAssoc('SELECT '. $this->getTableName(). '.* from '. $this->getTableName(). ' WHERE '. $this->getTableName(). '.id = ? AND user_id = ?', array($id, $userId));
+
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('*')
+            ->from($this->getTableName(), 't')
+            ->where('t.id = ?')
+            ->Andwhere('t.user_id = ?');
+
+        return $this->db->fetchAssoc($queryBuilder->getSql(), array($id, $userId));
     }
 
     public function findAll() {
-        return $this->db->fetchAll('SELECT '. $this->getTableName(). '.*, users.name from '. $this->getTableName(). ' INNER JOIN users ON '. $this->getTableName(). '.user_id = users.id');
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('t.*', 'u.name')
+            ->from($this->getTableName(), 't')
+            ->innerJoin('t', 'users', 'u', 't.user_id = u.id');
+
+        return $this->db->fetchAll($queryBuilder->getSql());
     }
 
     public function findAllForUser($userId, $amount = PHP_INT_MAX) {
-        return $this->db->fetchAll('
-        SELECT '. $this->getTableName(). '.*, users.name
-        from '. $this->getTableName(). '
-        INNER JOIN users ON '. $this->getTableName(). '.user_id = users.id
-        WHERE user_id = ?
-        ORDER BY date DESC
-        LIMIT ' . $amount,
-            array($userId)
-        );
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('t.id','t.title', 't.date', 't.status')
+            ->from($this->getTableName(), 't')
+            ->innerJoin('t', 'users', 'u', 't.user_id = u.id')
+            ->where('u.id = ?')
+            ->orderBy('t.date', 'DESC')
+            ->setMaxResults($amount);
+
+        return $this->db->fetchAll($queryBuilder->getSql(),array($userId));
     }
 
     public function lastID(){
         return $this->db->lastInsertId();
     }
-    public function search($tags){
-        $query =
-            'SELECT DISTINCT tools.id, tools.content, tools.title, tools.price, users.username FROM tools ' .
-            'INNER JOIN key_for_tools on key_for_tools.tools_id = tools.id ' .
-            'INNER JOIN keywords on key_for_tools.key_id = keywords.id ' .
-            'INNER JOIN users on users.id = tools.user_id ' .
-            'WHERE';
+    public function search($tags, $params = null){
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select('t.id', 't.status', 't.title', 't.price', 't.user_id', 'u.username', 'u.zipPostal')
+            ->from('tools', 't')
+            ->innerJoin('t', 'key_for_tools', 'kft', 'kft.tools_id = t.id')
+            ->innerJoin('t', 'keywords', 'k', 'kft.key_id = k.id')
+            ->innerJoin('t', 'users', 'u', 't.user_id = u.id');
 
-        $size = sizeof($tags);
-        for($i=0; $i < $size; $i++){
-            $query .= ' `key` LIKE \'%'.$tags[$i] .'%\'';
-            if ($i < $size-1) {
-                $query .= ' OR';
-            }
+
+        // filter
+        if (array_key_exists('userId', $params)){
+            $queryBuilder->andWhere($queryBuilder->expr()->neq('t.user_id', $queryBuilder->expr()->literal($params['userId'])));
         }
-        $query .= ' ;';
+        if (array_key_exists('zip', $params)){
+            $queryBuilder->andWhere($queryBuilder->expr()->eq('u.zipPostal', $queryBuilder->expr()->literal($params['zip'])));
+        }
 
-        $resultSet =  $this->db->fetchAll($query);
-        /*var_dump($query);
-        var_dump($resultSet);
-        die();//*/
-        /*$orderd = [[]];
+        // keys
+        for($i=0; $i < sizeof($tags); $i++){
+            $queryBuilder->andWhere($queryBuilder->expr()->like('k.key', $queryBuilder->expr()->literal('%' . $tags[$i] . '%')));
+        }
 
-        foreach($resultSet as $result){
-            $id = $this->multidimensional_search($orderd, ['id' => $result['user_id']]);
 
-            if ($id){
-                array_push($orderd[$id]['tools'], $result);
-            }
-            else {
-                $user = $this->db->fetchAssoc('SELECT * FROM users WHERE id = ?', array($result['user_id']));
-                $id = array_push($orderd, $user);
-                $orderd[$id-1]['tools']=[$result];
-            }
-        }*/
+        $resultSet = $this->db->fetchAll($queryBuilder->getSql( ) );
         return $resultSet;
     }
 
     public function countTools(){
-        return $this->db->fetchAssoc('SELECT count(*) FROM '. $this->getTableName());
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('count(*)')
+            ->from($this->getTableName(), 't');
+
+        return $this->db->fetchAssoc($queryBuilder->getSql());
 
     }
 }

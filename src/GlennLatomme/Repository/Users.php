@@ -12,10 +12,20 @@ class Users extends Repository {
         return 'users';
     }
     public function findUserByEmail($email) {
-        return $this->db->fetchAssoc('SELECT * FROM '. $this->getTableName() . ' WHERE email = ?', array($email));
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('*')
+            ->from($this->getTableName(), 'u')
+            ->where('u.email = ?');
+
+        return $this->db->fetchAssoc($queryBuilder->getSql(), array($email));
     }
     public function findUserByUsername($username) {
-        return $this->db->fetchAssoc('SELECT * FROM '. $this->getTableName() . ' WHERE username = ?', array($username));
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('*')
+            ->from($this->getTableName(), 'u')
+            ->where('u.username = ?');
+
+        return $this->db->fetchAssoc($queryBuilder->getSql(), array($username));
     }
 
     public function lastID(){

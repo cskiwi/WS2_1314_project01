@@ -1,0 +1,15 @@
+{% extends 'layout.twig' %}
+{% form_theme reservationForm 'bootstrap.html.twig' %}
+
+{% set pageTitle = 'Reservation'|trans %}
+{% set subTitle = 'Reservation'|trans %}
+
+{% block content %}
+    <div class="col-lg-12">
+        <p>{{ form(reservationForm) }}</p>
+    </div>
+{% endblock %}
+
+{% block SideNavigation %}
+    <li><a href="{{ path('admin.tool.add') }}"><i class="fa fa-plus fa-fw"></i> {{ 'Add' |trans }}</a></li>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'layout.twig' %}
+
+{% set pageTitle = 'Reservations'|trans %}
+{% set subTitle = 'Reservations'|trans %}
+
+{% block content %}
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Awaiting reservations' |trans }}</div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{{ 'User' | trans  }}</th>
+                        <th>{{ 'Tool' | trans  }}</th>
+                        <th>{{ 'Start' | trans  }}</th>
+                        <th>{{ 'Stop' | trans  }}</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for reservation in waiting_reservations %}
+                        <tr>
+                            <td>{{ reservation.id }}</td>
+                            <td><a href="{{ path('user.profile', { 'username': reservation.username}) }}">{{ reservation.username }}</a></td>
+                            <td><a href="{{ path('tool.detail', { 'toolId': reservation.toolId}) }}">{{ reservation.title }}</a></td>
+                            <td>{{ reservation.start_date|date('Y-m-d') }}</td>
+                            <td>{{ reservation.end_date|date('Y-m-d') }}</td>
+                            <td class="text-right">
+                                <a href="{{ path('reservations.deny', { 'id':  reservation.id }) }}" class="btn btn-danger" role="button">{{ 'Deny' | trans  }}</a>
+                            </td>
+                            <td class="text-right">
+                                <a href="{{ path('reservations.accept', { 'id':  reservation.id }) }}" class="btn btn-primary" role="button">{{ 'Accept' | trans  }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Accepted reservations' |trans }}</div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{{ 'User' | trans  }}</th>
+                        <th>{{ 'Tool' | trans  }}</th>
+                        <th>{{ 'Start' | trans  }}</th>
+                        <th>{{ 'Stop' | trans  }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for reservation in accepted_reservations %}
+                        <tr>
+                            <td>{{ reservation.id }}</td>
+                            <td><a href="{{ path('user.profile', { 'username': reservation.username}) }}">{{ reservation.username }}</a></td>
+                            <td><a href="{{ path('tool.detail', { 'toolId': reservation.toolId}) }}">{{ reservation.title }}</a></td>
+                            <td>{{ reservation.start_date|date('Y-m-d') }}</td>
+                            <td>{{ reservation.end_date|date('Y-m-d') }}</td>
+                            <td class="text-right">
+                                <a href="{{ path('reservations.deny', { 'id':  reservation.id }) }}" class="btn btn-danger" role="button">{{ 'Deny' | trans  }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Denied reservations' |trans }}</div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{{ 'User' | trans  }}</th>
+                        <th>{{ 'Tool' | trans  }}</th>
+                        <th>{{ 'Start' | trans  }}</th>
+                        <th>{{ 'Stop' | trans  }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for reservation in denied_reservations %}
+                        <tr>
+                            <td>{{ reservation.id }}</td>
+                            <td><a href="{{ path('user.profile', { 'username': reservation.username}) }}">{{ reservation.username }}</a></td>
+                            <td><a href="{{ path('tool.detail', { 'toolId': reservation.toolId}) }}">{{ reservation.title }}</a></td>
+                            <td>{{ reservation.start_date|date('Y-m-d') }}</td>
+                            <td>{{ reservation.end_date|date('Y-m-d') }}</td>
+                            <td class="text-right">
+                                <a href="{{ path('reservations.accept', { 'id':  reservation.id }) }}" class="btn btn-primary" role="button">{{ 'Accept' | trans  }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'Mail/layout.twig' %}
+{% set pageTitle = 'Reservation denied' |trans%}
+{% set subTitle = 'Reservation denied' |trans %}
+
+{% block content %}
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Reservation got denied'|trans }}</div>
+            <div class="panel-body">
+                <p>Hi {{ user.name }}, <br/>
+                    We are sorry to anounce your resrvation for <strong>{{ reservation.title }}</strong> got denied for the period {{ reservation.start_date }} until {{ reservation.end_date }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

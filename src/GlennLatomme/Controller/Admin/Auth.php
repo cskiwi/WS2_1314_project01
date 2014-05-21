@@ -156,7 +156,7 @@ class Auth implements ControllerProviderInterface {
                         ->setTo([$data['email']])
                         ->setBody(
                             $app['twig']->render(
-                                'Mail/signup.twig',
+                                'Mail/Auth/signup.twig',
                                 array('name' => $data['username'])
                             ), 'text/html'
                         );

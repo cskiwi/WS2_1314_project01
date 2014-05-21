@@ -1764,12 +1764,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Translation.git",
-                "reference": "254931b0bce3c70f6f1d58a403873c2628260a5b"
+                "reference": "6f3de3adb38479ef8d0cfc45c670359b7143a29c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Translation/zipball/254931b0bce3c70f6f1d58a403873c2628260a5b",
-                "reference": "254931b0bce3c70f6f1d58a403873c2628260a5b",
+                "url": "https://api.github.com/repos/symfony/Translation/zipball/6f3de3adb38479ef8d0cfc45c670359b7143a29c",
+                "reference": "6f3de3adb38479ef8d0cfc45c670359b7143a29c",
                 "shasum": ""
             },
             "require": {
@@ -1812,7 +1812,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "http://symfony.com",
-            "time": "2014-05-04 16:56:58"
+            "time": "2014-05-14 13:24:58"
         },
         {
             "name": "symfony/twig-bridge",
@@ -1821,12 +1821,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/TwigBridge.git",
-                "reference": "e11e36626b1a540d909ddc310562fa2555fb389e"
+                "reference": "2589ff74e77099ad49f396b919b020032bd5670f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/TwigBridge/zipball/e11e36626b1a540d909ddc310562fa2555fb389e",
-                "reference": "e11e36626b1a540d909ddc310562fa2555fb389e",
+                "url": "https://api.github.com/repos/symfony/TwigBridge/zipball/2589ff74e77099ad49f396b919b020032bd5670f",
+                "reference": "2589ff74e77099ad49f396b919b020032bd5670f",
                 "shasum": ""
             },
             "require": {
@@ -1886,7 +1886,7 @@
             ],
             "description": "Symfony Twig Bridge",
             "homepage": "http://symfony.com",
-            "time": "2014-05-03 09:54:10"
+            "time": "2014-05-12 09:28:39"
         },
         {
             "name": "symfony/twig-bundle",

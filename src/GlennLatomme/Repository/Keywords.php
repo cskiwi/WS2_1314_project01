@@ -7,14 +7,17 @@ class Keywords extends \Knp\Repository {
         return 'keywords';
     }
     public function insertKey($key, $tool){
-// check if keyword exists if not insert
-        $dbKey = $this->findByKey('key', $key);
+
+        // check if exists
+        $dbKey = $this->findKey($key);
         if ($dbKey == null){
             $this->insert(array(
                 '`key`' => $key
             ));
 
-            $dbKey = $this->findByKey('key', $key);
+            // fetch the new key
+            $dbKey = $this->findKey($key);
+
         }
 
         // link keyword to tool
@@ -23,10 +26,23 @@ class Keywords extends \Knp\Repository {
         }
     }
 
-    public function findByKey($key, $item){
-        return $this->db->fetchAll('SELECT * FROM '. $this->getTableName() .' WHERE `'.$key.'` = ?', array($item));
+    public function findKey($item){
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('k.*')
+            ->from($this->getTableName(), 'k')
+            ->where('k.key = ?');
+        return $this->db->fetchAll($queryBuilder->getSql(), array($item));
     }
+
     public function findKeywords($toolID){
-        return $this->db->fetchAll('SELECT * FROM keywords inner join key_for_tools on keywords.id = key_for_tools.key_id where tools_id = ?', array($toolID));
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('k.*')
+            ->from($this->getTableName(), 'k')
+            ->innerJoin('k', 'key_for_tools', 'kft', 'k.id = kft.key_id')
+            ->where('kft.tools_id = ?');
+
+        return $this->db->fetchAll($queryBuilder->getSql(), array($toolID));
     }
+
+
 }

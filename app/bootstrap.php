@@ -7,6 +7,8 @@ use Symfony\Component\Translation\Loader\YamlFileLoader;
 $app = new Silex\Application();
 
 $app['debug'] = true;
+$app['mails'] = false;
+
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\SessionServiceProvider());
 $app->register(new Silex\Provider\ValidatorServiceProvider());
@@ -38,6 +40,7 @@ $app->register(new Knp\Provider\RepositoryServiceProvider(), array(
         'db.tools' => 'GlennLatomme\\Repository\\Tools',
         'db.keywords' => 'GlennLatomme\\Repository\\Keywords',
         'db.messages' => 'GlennLatomme\\Repository\\Messaging',
+        'db.reservations' => 'GlennLatomme\\Repository\\Reservations',
     )
 ));
 

@@ -54,16 +54,23 @@ class Tool implements ControllerProviderInterface {
         $data = $request->get('q');
         $user = $app['db.users']->find($app['session']->get('user')['id']);
         $search_result = null;
-        $numItemsPerPage = 10;
+        $numItemsPerPage = 8;
 
         $curPage = max(1, (int) $request->query->get('p'));
 
+        $params = [];
+        if (($includeOwn = $request->get('includeOwn')) != 'on') $params['userId'] = $user['id'];
+        if ($zip = $request->get('zip')) $params['zip'] = $zip;
+
         if ($data){
-            $search_result = $app['db.tools']->search(explode(" ", $data));
-            for($i = 0; $i<sizeof($search_result); $i++){
-                foreach(glob($app['rmt.base_path'] . $search_result[$i]['id'] .DIRECTORY_SEPARATOR. "*.{jpg,JPG,jpeg,JPEG,png,PNG}",GLOB_BRACE) as $image) {
-                    $search_result[$i]['images'][]= basename($image);
-                }
+            $search_result = $app['db.tools']->search(explode(" ", $data),$params);
+        } else {
+            $search_result = $app['db.tools']->findAll();
+        }
+
+        for($i = 0; $i<sizeof($search_result); $i++){
+            foreach(glob($app['rmt.base_path'] . $search_result[$i]['id'] .DIRECTORY_SEPARATOR. "*.{jpg,JPG,jpeg,JPEG,png,PNG}",GLOB_BRACE) as $image) {
+                $search_result[$i]['images'][]= basename($image);
             }
         }
 
@@ -75,12 +82,14 @@ class Tool implements ControllerProviderInterface {
 
         return $app['twig']->render('tool/search.twig', [
             'search_result' => $items,
-            'user' => $user,
-            'searchQuerry' => $data,
-            'pagination' => $pagination,
-            'curPage' => $curPage,
-            'numPages' => $numPages,
-            'numItems' => $numItems
+            'user'          => $user,
+            'searchQuerry'  => $data,
+            'includeOwn'    => $includeOwn,
+            'zip'           => $zip,
+            'pagination'    => $pagination,
+            'curPage'       => $curPage,
+            'numPages'      => $numPages,
+            'numItems'      => $numItems
         ]);
     }
     function generatePaginationSequence($curPage, $numPages, $numberOfPagesAtEdges = 2, $numberOfPagesAroundCurrent = 2, $glue = '..', $indicateActive = false) {
