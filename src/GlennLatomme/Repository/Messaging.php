@@ -10,9 +10,10 @@ class Messaging extends \Knp\Repository {
 
     public function findInbox($userId, $amount = PHP_INT_MAX){
         $queryBuilder = $this->db->createQueryBuilder()
-            ->select ('m.*','u.username', 'u.id as userId')
+            ->select ('m.*','tu.username as to_username', 'fu.username as from_username', 'fu.id as userId')
             ->from($this->getTableName(), 'm')
-            ->innerJoin('m', 'users', 'u', 'm.to_user = u.id')
+            ->innerJoin('m', 'users', 'fu', 'm.from_user = fu.id')
+            ->innerJoin('m', 'users', 'tu', 'm.to_user = tu.id')
             ->where('m.to_user = ?')
             ->orderBy('m.date_send', 'DESC')
             ->setMaxResults($amount);

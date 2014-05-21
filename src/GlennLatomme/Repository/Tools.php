@@ -22,7 +22,15 @@ class Tools extends Repository {
 
         return $this->db->fetchAssoc($queryBuilder->getSql(), array($id, $userId));
     }
+    public function find($id) {
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->select ('t.*', 'u.username')
+            ->from($this->getTableName(), 't')
+            ->innerJoin('t', 'users', 'u', 't.user_id = u.id')
+            ->where('t.id = ?');
 
+        return $this->db->fetchAssoc($queryBuilder->getSql(), array($id));
+    }
     public function findAll() {
         $queryBuilder = $this->db->createQueryBuilder()
             ->select ('t.*', 'u.name')

@@ -159,6 +159,7 @@ class Tool implements ControllerProviderInterface {
     public function edit(Application $app, $toolId) {
         // Fetch tool with given $toolPostId and logged in user Id
         $tool = $app['db.tools']->findForUser($toolId, $app['session']->get('user')['id']);
+        $tags = array_map('current',  $app['db.keywords']->findKeywords($toolId));
 
         // Redirect to overview if it does not exist
         if ($tool === false) {
@@ -201,6 +202,7 @@ class Tool implements ControllerProviderInterface {
                 )
             ))
             ->add('tags', 'collection', array(
+                'data' => $tags,
                 'type'   => 'text',
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -254,6 +256,10 @@ class Tool implements ControllerProviderInterface {
                     'price' =>  $data['price']
                 ], array('id' => $toolId));
 
+                // insert keywords
+                foreach($data['tags'] as $tag){
+                    $app['db.keywords']->insertKey(htmlentities($tag), $toolId);
+                }
                 // Redirect to overview
                 return $app->redirect($app['url_generator']->generate('tool.detail', ['toolId' => $toolId]) . '?feedback=edited');
             }

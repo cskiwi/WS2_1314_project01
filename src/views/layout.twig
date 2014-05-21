@@ -64,7 +64,7 @@
                             <li>
                                 <a href="{{ path('messages.detail', {'id':message.id} ) }}">
                                 <div>
-                                        <strong>{{ message.username }} {% if message.message_read  == false%} <span class="badge">new</span> {% endif %}</strong>
+                                        <strong>{{ message.from_username }} {% if message.message_read  == false%} <span class="badge">new</span> {% endif %}</strong>
                                         <span class="pull-right text-muted">
                                             <em>{{ message.date_send | trans }}</em>
                                         </span>

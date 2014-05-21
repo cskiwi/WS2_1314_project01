@@ -12,7 +12,7 @@
             {% if messages %}
                 {% for message in messages  %}
                     <a href="{{ path('messages.detail', { 'id':  message.id }) }}" class="list-group-item">
-                        <span class="name">{{  message.username }} {% if message.message_read == false %}<span class="badge">new</span> {% endif %}</span> <span class="">{{ message.title }}</span>
+                        <span class="name">{{  message.from_username }} {% if message.message_read == false %}<span class="badge">new</span> {% endif %}</span> <span class="">{{ message.title }}</span>
                         <span class="text-muted">- {{ message.content |slice(0, 50) |striptags  }}</span> <span class="badge">{{ message.date_send }}</span>
                     </a>
                 {% endfor %}

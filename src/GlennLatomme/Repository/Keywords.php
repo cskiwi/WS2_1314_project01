@@ -36,7 +36,7 @@ class Keywords extends \Knp\Repository {
 
     public function findKeywords($toolID){
         $queryBuilder = $this->db->createQueryBuilder()
-            ->select ('k.*')
+            ->select ('k.key')
             ->from($this->getTableName(), 'k')
             ->innerJoin('k', 'key_for_tools', 'kft', 'k.id = kft.key_id')
             ->where('kft.tools_id = ?');
