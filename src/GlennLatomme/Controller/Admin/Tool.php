@@ -52,6 +52,7 @@ class Tool implements ControllerProviderInterface {
         $user = $app['session']->get('user');
 
         $tools = $app['db.tools']->findAllForUser($user['id']);
+
         return $app['twig']->render('Admin/Tool/overview.twig', array(
             'tools' => $tools,
         ));
@@ -276,10 +277,10 @@ class Tool implements ControllerProviderInterface {
     public function delete(Application $app, $toolId) {
 
         // Fetch toolpost with given $toolPostId and logged in user Id
-        $toolpost = $app['db.tools']->findForUser($toolId, $app['session']->get('user')['id']);
+        $tool = $app['db.tools']->findForUser($toolId, $app['session']->get('user')['id']);
 
         // Redirect to overview if it does not exist
-        if ($toolpost === false) {
+        if ($tool === false) {
             return $app->redirect($app['url_generator']->generate('admin.tool.overview'));
         }
 

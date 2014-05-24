@@ -21,7 +21,7 @@
                 <tr>
                     <td>{{ tool.id }}</td>
                     <td><a href="{{ path('tool.detail', { 'toolId': tool.id}) }}">{{ tool.title }}</a></td>
-                    <td>{{ tool.date|date('Y-m-d H:i:s') }}</td>
+                    <td>{{ tool.date|date('Y-m-d') }}</td>
                     <td class="text-center"> {{ tool.status |trans }}</td>
                     <td class="text-right">
                         <form action="{{ path('admin.tool.delete', { 'toolId': tool.id}) }}" method="post" class="delete">

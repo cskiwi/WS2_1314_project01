@@ -1,0 +1,37 @@
+{% if tools %}
+    {% for tool in tools  %}
+        <div class="col-md-3 search-item">
+            <div class="thumbnail">
+                {% if tool.images is defined %}
+                    <img src="{{ app.request.baseUrl }}{{ app['rmt.base_url'] }}/{{ tool.id}}/{{ tool.images[0] }}" alt="{{ tool.title|striptags }}">
+                {% else %}
+                    <img src="http://placehold.it/100x100" alt="{{ tool.title|striptags }}">
+                {% endif %}
+                <div class="caption">
+                    <h3>{{ tool.title[:20] |striptags}} {% if tool.title|length > 20 %}... {% endif %}</h3>
+                    <p>Status: {{ tool.status  }}</p>
+                    <p>Price:
+                        {% if tool.price %}
+                            <span class="lead">{{ tool.price }}</span> / <small>day</small>
+                        {% else %}
+                            Free!
+                        {% endif %}
+                    </p>
+                    <p class="text-center"><a href="{{ path('tool.detail', { 'toolId':  tool.id }) }}" class="btn btn-default" role="button">Details</a>
+                        {% if app.session.get('user') %}
+                            {% if app.session.get('user')['id'] != tool.user_id %}
+                                <a href="{{ path('reservations.make', {'id' :  tool.id} ) }}" role="button" class="btn btn-primary">Rent!</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ path('auth.login') }}">Login</a> and rent this tool!
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="col-md-4">
+        <p> No tools found!</p>
+    </div>
+{% endif %}

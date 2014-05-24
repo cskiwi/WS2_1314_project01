@@ -22,6 +22,9 @@ li {
         padding-top: 50px;
     }
 }
+a:hover {
+    text-decoration: none;
+}
 
 /* Wrappers */
 
@@ -354,8 +357,15 @@ ul.tags > li {
     height: 500px;
 }
 .search-item {
+    z-index:1;
     height: 285px;
+    margin: 10px 0;
+}
+.search-item > .thumbnail{
+    height: 100%;
 }
 .search-item > .thumbnail > img {
     height: 100px;
 }
+
+.datepicker { z-index: 10100 !important; }

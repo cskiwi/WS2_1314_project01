@@ -27,11 +27,13 @@ class Tool implements ControllerProviderInterface {
         return $controllers;
 
     }
-
     public function detail(Application $app, $toolId){
+        $user = $app['session']->get('user');
         $tool = $app['db.tools']->find($toolId);
         $by = $app['db.users']->find($tool['user_id']);
         $tags = $app['db.keywords']->findKeywords($tool['id']);
+        $similar = $app['db.tools']->search(array_map('current', $tags),['userId' => $user['id'], 'exclude' => $toolId]);
+
         $images = null;
 
         foreach(glob($app['rmt.base_path'] . $toolId .DIRECTORY_SEPARATOR. "*.{jpg,JPG,jpeg,JPEG,png,PNG}",GLOB_BRACE) as $image) $images[]= basename($image);
@@ -42,13 +44,12 @@ class Tool implements ControllerProviderInterface {
                 'tool' => $tool,
                 'by' => $by,
                 'tags' => $tags,
-                'images' => $images
+                'images' => $images,
+                'similar' => $similar
             ]);
         }
         return $app->redirect($app['url_generator']->generate('index'));
     }
-
-
     public function search(Application $app, Request $request) {
 
         $data = $request->get('q');
@@ -61,12 +62,12 @@ class Tool implements ControllerProviderInterface {
         $params = [];
         if (($includeOwn = $request->get('includeOwn')) != 'on') $params['userId'] = $user['id'];
         if ($zip = $request->get('zip')) $params['zip'] = $zip;
+        if ($start_date = $request->get('start_date')) $params['start_date'] = $start_date;
+        if ($end_date = $request->get('end_date')) $params['end_date'] = $end_date;
+        if ($free = $request->get('free')) $params['free'] = $free;
 
-        if ($data){
-            $search_result = $app['db.tools']->search(explode(" ", $data),$params);
-        } else {
-            $search_result = $app['db.tools']->findAll();
-        }
+
+        $search_result = $app['db.tools']->search(explode(" ", $data),$params);
 
         for($i = 0; $i<sizeof($search_result); $i++){
             foreach(glob($app['rmt.base_path'] . $search_result[$i]['id'] .DIRECTORY_SEPARATOR. "*.{jpg,JPG,jpeg,JPEG,png,PNG}",GLOB_BRACE) as $image) {
@@ -81,10 +82,13 @@ class Tool implements ControllerProviderInterface {
         $pagination = $this->generatePaginationSequence($curPage,$numPages);
 
         return $app['twig']->render('tool/search.twig', [
-            'search_result' => $items,
+            'tools' => $items,
             'user'          => $user,
             'searchQuerry'  => $data,
             'includeOwn'    => $includeOwn,
+            'start_date'    => $start_date,
+            'end_date'      => $end_date,
+            'free'          => $free,
             'zip'           => $zip,
             'pagination'    => $pagination,
             'curPage'       => $curPage,

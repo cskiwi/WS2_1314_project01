@@ -138,7 +138,7 @@
                         <li class="divider"></li>
                         {% for tool in app.session.get('tools') %}
                             <li><a href="{{ path('tool.detail',{ 'toolId' : tool.id}) }}">
-                                    <strong>{{ tool.title[:15]  }} {% if tool.title |length > 15 %}... {% endif %}</strong>
+                                    <strong>{{ tool.title[:30]  }} {% if tool.title |length > 30 %}... {% endif %}</strong>
                                     <span class="pull-right text-muted">{{ 'Status'|trans }}: {{ tool.status |trans }}</span>
                                 </a></li>
                             <li class="divider"></li>
@@ -166,6 +166,8 @@
                 </a>
                 <ul class="dropdown-menu dropdown-user">
                     {# User is logged in: show nagivation #}
+                    <li><a href="{{ path('user.profile') }}"><i class="fa fa-user fa-fw"></i> {{ 'Profile' |trans }}</a></li>
+                    <li class="divider"></li>
                     <li><a href="{{ path('admin.dashboard') }}"><i class="fa fa-bars fa-fw"></i> {{ 'Dashboard' |trans }}</a></li>
                     <li><a href="{{ path('user.profile') }}"><i class="fa fa-user fa-fw"></i> {{ 'User Profile' |trans }}</a></li>
                     <li><a href="{{ path('admin.settings') }}"><i class="fa fa-gear fa-fw"></i> {{ 'Settings' |trans }}</a></li>

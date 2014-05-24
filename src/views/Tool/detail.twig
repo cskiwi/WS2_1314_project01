@@ -8,7 +8,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">{{ tool.title | striptags}}</div>
             <div class="panel-body">
-                {{ tool.content | striptags}}
+                {{ tool.content | raw}}
             </div>
         </div>
     </div>
@@ -39,11 +39,14 @@
         <div class="panel panel-default">
             <div class="panel-heading">{{ 'Info'|trans }}</div>
             <div class="panel-body">
-                {% if tool.price %}
-                    <span class="lead">{{ tool.price }}</span> / <small>day</small>
-                {% else %}
-                    <p>Free!</p>
-                {% endif %}
+                <p>User: <a href="{{ path('user.profile',{'username':by.username}) }}">{{ by.username }}</a></p>
+                <p>
+                    {% if tool.price %}
+                        <span class="lead">{{ tool.price }}</span> / <small>day</small>
+                    {% else %}
+                        Free!
+                    {% endif %}
+                </p>
 
                 {% if app.session.get('user') %}
                     {% if app.session.get('user')['id'] != tool.user_id %}
@@ -54,8 +57,18 @@
                 {% endif %}
             </div>
         </div>
-    </div>
-    <div class="col-lg-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Similar'|trans }}</div>
+            <div class="panel-body">
+                {% if (similar | length > 0) %}
+                    <ul>
+                        {% for tool_similar in similar %}
+                            <li><a href="{{ path('tool.detail', {'toolId':tool_similar.id}) }}">{{ tool_similar.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
         {% if (tags | length > 0) %}
             <div class="help-block">
                 Tags:

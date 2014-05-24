@@ -83,10 +83,6 @@ class Reservations extends \Knp\Repository {
         $queryBuilder->andWhere($queryBuilder->expr()->gt('CURRENT_DATE', 'r.end_date'));
         $areAvailible = $this->db->fetchAll($queryBuilder->getSql());
 
-        /*echo 'to Availible';
-        var_dump($queryBuilder->getSql());
-        echo'values';
-        var_dump ($areAvailible);//*/
         foreach($areAvailible as $available){
             $queryBuilder = $this->db->createQueryBuilder();
             $q2 = $queryBuilder->update('tools', 't')
@@ -98,7 +94,13 @@ class Reservations extends \Knp\Repository {
         }
 
 
+        // delete reservations that passed
+        $queryBuilder = $this->db->createQueryBuilder()
+            ->delete ($this->getTableName());
 
+        $queryBuilder->andWhere($queryBuilder->expr()->lt('end_date', 'CURRENT_DATE'));
+
+        $this->db->executeQuery($queryBuilder->getSQL() );
 
         /*
         $queryBuilder = $this->db->createQueryBuilder()

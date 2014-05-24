@@ -32,6 +32,12 @@ class User implements ControllerProviderInterface {
     public function detail(Application $app, $username){
         $profile =  $app['db.users']->findUserByUsername($username);
         $tools = $app['db.tools']->findAllForUser( $profile['id']);
+        for($i = 0; $i<sizeof($tools); $i++){
+            foreach(glob($app['rmt.base_path'] . $tools[$i]['id'] .DIRECTORY_SEPARATOR. "*.{jpg,JPG,jpeg,JPEG,png,PNG}",GLOB_BRACE) as $image) {
+                $tools[$i]['images'][]= basename($image);
+            }
+        }
+
         return $app['twig']->render('user/profile.twig',[
             'profile' => $profile,
             'tools' => $tools
