@@ -7,7 +7,7 @@ use Symfony\Component\Translation\Loader\YamlFileLoader;
 $app = new Silex\Application();
 
 $app['debug'] = true;
-$app['mails'] = false;
+$app['mails'] = true;
 
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\SessionServiceProvider());

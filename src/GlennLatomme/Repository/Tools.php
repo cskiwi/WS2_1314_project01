@@ -57,7 +57,7 @@ class Tools extends Repository {
     }
     public function search($tags, $params = null){
         $queryBuilder = $this->db->createQueryBuilder()
-            ->select('t.id', 't.status', 't.title', 't.price', 't.user_id', 'u.username', 'u.zipPostal')
+            ->select('t.id', 't.status', 't.title', 't.price', 't.user_id', 'u.username', 'u.zipPostal', 'u.stateProvinceRegion')
             ->from('tools', 't')
             ->innerJoin('t', 'key_for_tools', 'kft', 'kft.tools_id = t.id')
             ->innerJoin('t', 'keywords', 'k', 'kft.key_id = k.id')
@@ -79,14 +79,23 @@ class Tools extends Repository {
             if (array_key_exists('free', $params)){
                 $queryBuilder->andWhere('t.price is null');
             }
+            if (array_key_exists('stateProvinceRegion', $params)){
+                $queryBuilder->andWhere($queryBuilder->expr()->like('u.stateProvinceRegion', $queryBuilder->expr()->literal('%' . $params['stateProvinceRegion'] . '%')));
+
+            }
         }
         // keys
         for($i=0; $i < sizeof($tags); $i++){
-            $queryBuilder->andWhere($queryBuilder->expr()->like('k.key', $queryBuilder->expr()->literal('%' . $tags[$i] . '%')));
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orx(
+                    $queryBuilder->expr()->like('k.key', $queryBuilder->expr()->literal('%' . $tags[$i] . '%')),
+                    $queryBuilder->expr()->like('t.title', $queryBuilder->expr()->literal('%' . $tags[$i] . '%'))
+                )
+            );
+
         }
 
         $resultSet = $this->db->fetchAll($queryBuilder->getSql( ) );
-
         if($params){
             if (array_key_exists('end_date', $params) || array_key_exists('start_date', $params)){
                 $reservations = $this->reservationsInPeriod(array_key_exists('start_date', $params)?$params['start_date']:null, array_key_exists('end_date', $params)?$params['end_date']:null);

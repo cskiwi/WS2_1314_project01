@@ -1,0 +1,14 @@
+{% extends 'Mail/layout.twig' %}
+{% set pageTitle = 'Reservation' |trans%}
+{% set subTitle = 'Reservation' |trans %}
+
+{% block content %}
+    <div class="col-lg-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ 'Reservation by'|trans }} {{ user.username }}</div>
+            <div class="panel-body">
+                <P>Someone made a reservation for <strong>{{ reservation.title }}</strong> for the period {{ reservation.start_date }} until {{ reservation.end_date }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -65,6 +65,7 @@ class Tool implements ControllerProviderInterface {
         if ($start_date = $request->get('start_date')) $params['start_date'] = $start_date;
         if ($end_date = $request->get('end_date')) $params['end_date'] = $end_date;
         if ($free = $request->get('free')) $params['free'] = $free;
+        if ($stateProvinceRegion = $request->get('stateProvinceRegion')) $params['stateProvinceRegion'] = $stateProvinceRegion;
 
 
         $search_result = $app['db.tools']->search(explode(" ", $data),$params);
@@ -75,14 +76,14 @@ class Tool implements ControllerProviderInterface {
             }
         }
 
-
         $numItems = count($search_result);
         $numPages = ceil($numItems / $numItemsPerPage);
         $items = ($search_result) ? array_slice($search_result, ($curPage - 1) * $numItemsPerPage, $numItemsPerPage) :  null;
         $pagination = $this->generatePaginationSequence($curPage,$numPages);
 
+
         return $app['twig']->render('tool/search.twig', [
-            'tools' => $items,
+            'tools'         => $items,
             'user'          => $user,
             'searchQuerry'  => $data,
             'includeOwn'    => $includeOwn,
@@ -90,6 +91,7 @@ class Tool implements ControllerProviderInterface {
             'end_date'      => $end_date,
             'free'          => $free,
             'zip'           => $zip,
+            'stateProvinceRegion' => $stateProvinceRegion,
             'pagination'    => $pagination,
             'curPage'       => $curPage,
             'numPages'      => $numPages,

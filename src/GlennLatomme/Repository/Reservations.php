@@ -9,7 +9,7 @@ class Reservations extends \Knp\Repository {
     public function findForUser($id, $userId) {
 
         $queryBuilder = $this->db->createQueryBuilder()
-            ->select ('r.*')
+            ->select ('r.*, t.title')
             ->from($this->getTableName(), 'r')
             ->innerJoin('r', 'users', 'u', 'r.user_id = u.id')
             ->innerJoin('r', 'tools', 't', 'r.tool_id = t.id')

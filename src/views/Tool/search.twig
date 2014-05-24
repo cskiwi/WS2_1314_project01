@@ -6,7 +6,13 @@
 {% block content %}
     <div class="col-lg-12">
         <div class="row">
-            {% include 'include/toollist.twig' with tools %}
+            {% if tools %}
+                {% include 'include/toollist.twig'%}
+            {% else %}
+                <div class="col-md-4">
+                    <p> No tools found!</p>
+                </div>
+            {% endif %}
         </div>
 
     </div>
@@ -56,6 +62,11 @@
     <div class="form-group">
         <label for="zip">Zipcode</label>
         <input type="text" class="form-control" id="zip" name="zip" {% if zip %}value="{{ zip }}" {% endif %} placeholder="Enter zipcode">
+    </div>
+
+    <div class="form-group">
+        <label for="zip">State Province Region</label>
+        <input type="text" class="form-control" id="stateProvinceRegion" name="stateProvinceRegion" {% if stateProvinceRegion %}value="{{ stateProvinceRegion }}" {% endif %} placeholder="Enter zipcode">
     </div>
 
     <h4>Price</h4>

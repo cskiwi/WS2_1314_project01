@@ -35,7 +35,13 @@
     <h4>Tools by user</h4>
     <div class="col-lg-12">
         <div class="row">
-            {% include 'include/toollist.twig' with tools %}
+            {% if tools %}
+                {% include 'include/toollist.twig'%}
+            {% else %}
+                <div class="col-md-4">
+                    <p> No tools found!</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 
