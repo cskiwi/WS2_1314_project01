@@ -25,5 +25,5 @@ if($app['session']->get('user')) {
 }
 // run daily as cronjob
 $app['db.reservations']->processReservations();
-
+$app['db.keywords']->deleteUnusedKeys();
 $app->run();

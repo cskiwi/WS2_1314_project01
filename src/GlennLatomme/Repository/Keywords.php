@@ -31,6 +31,30 @@ class Keywords extends \Knp\Repository {
         }
     }
 
+    public function deleteUnusedKeys(){
+        $queryBuilder = $this->db->createQueryBuilder();
+
+        $queryBuilder
+            ->select( 'k.*')
+            ->from('keywords', 'k')
+            ->leftJoin('k', 'key_for_tools','kft','k.id = kft.key_id')
+            ->where('kft.key_id is NULL')
+        ;
+        //var_dump($queryBuilder->getSQL());//->execute();
+
+        $results = $this->db->fetchAll($queryBuilder->getSQL());
+
+        foreach ($results as $result) {
+            //var_dump($result);
+
+
+            $this->db->delete('keywords', ['id' => $this->db->quote($result['id'])]);
+        }
+
+// DELETE key FROM keywords AS key LEFT OUTER JOIN key_for_tools AS kft ON key.id= kft.key_id WHERE kft.key_id IS NULL
+// SELECT k FROM keywords AS k LEFT OUTER JOIN key_for_tools AS kft ON k.id= kft.key_id WHERE kft.key_id IS NULL
+    }
+
     public function findKey($item){
         $queryBuilder = $this->db->createQueryBuilder()
             ->select ('k.*')
