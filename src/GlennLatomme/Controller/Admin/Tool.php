@@ -257,10 +257,20 @@ class Tool implements ControllerProviderInterface {
                     'price' =>  $data['price']
                 ], array('id' => $toolId));
 
-                // insert keywords
-                foreach($data['tags'] as $tag){
-                    $app['db.keywords']->insertKey(htmlentities($tag), $toolId);
+                $add = array_diff($data['tags'], $tags);
+                $delete = array_diff($tags,$data['tags']);
+
+                foreach($add as $tag){
+                    if ($tag != ''){
+                        $app['db.keywords']->insertKey(htmlentities($tag), $toolId);
+                    }
                 }
+                foreach($delete as $tag){
+                    if ($tag != ''){
+                        $app['db.keywords']->deleteKey(htmlentities($tag), $toolId);
+                    }
+                }
+
                 // Redirect to overview
                 return $app->redirect($app['url_generator']->generate('tool.detail', ['toolId' => $toolId]) . '?feedback=edited');
             }

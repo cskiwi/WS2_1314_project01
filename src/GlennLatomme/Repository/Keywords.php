@@ -6,6 +6,11 @@ class Keywords extends \Knp\Repository {
     public function getTableName() {
         return 'keywords';
     }
+
+    public function deleteKey($key, $toolid){
+        $key = $this->findKey($key);
+        $this->db->delete('key_for_tools', ['tools_id' => $toolid, 'key_id' => $key['id']]);
+    }
     public function insertKey($key, $tool){
 
         // check if exists
@@ -21,8 +26,8 @@ class Keywords extends \Knp\Repository {
         }
 
         // link keyword to tool
-        if ($this->db->fetchAll('SELECT * FROM key_for_tools WHERE tools_id = ? AND key_id = ?', array($tool,$dbKey[0]['id'])) == null){
-            $this->db->insert('key_for_tools', array('tools_id' => $tool, 'key_id' => $dbKey[0]['id']));
+        if ($this->db->fetchAll('SELECT * FROM key_for_tools WHERE tools_id = ? AND key_id = ?', array($tool,$dbKey['id'])) == null){
+            $this->db->insert('key_for_tools', array('tools_id' => $tool, 'key_id' => $dbKey['id']));
         }
     }
 
@@ -31,7 +36,7 @@ class Keywords extends \Knp\Repository {
             ->select ('k.*')
             ->from($this->getTableName(), 'k')
             ->where('k.key = ?');
-        return $this->db->fetchAll($queryBuilder->getSql(), array($item));
+        return $this->db->fetchAssoc($queryBuilder->getSql(), array($item));
     }
 
     public function findKeywords($toolID){
