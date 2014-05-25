@@ -50,9 +50,11 @@ class Keywords extends \Knp\Repository {
 
             $this->db->delete('keywords', ['id' => $this->db->quote($result['id'])]);
         }
+/*
+ DELETE k FROM keywords AS k LEFT OUTER JOIN key_for_tools AS kft ON k.id= kft.key_id WHERE kft.key_id IS NULL;
+SELECT k.* FROM keywords AS k LEFT OUTER JOIN key_for_tools AS kft ON k.id= kft.key_id WHERE kft.key_id IS NULL;
 
-// DELETE key FROM keywords AS key LEFT OUTER JOIN key_for_tools AS kft ON key.id= kft.key_id WHERE kft.key_id IS NULL
-// SELECT k FROM keywords AS k LEFT OUTER JOIN key_for_tools AS kft ON k.id= kft.key_id WHERE kft.key_id IS NULL
+ */
     }
 
     public function findKey($item){

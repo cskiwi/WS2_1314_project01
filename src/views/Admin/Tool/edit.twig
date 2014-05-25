@@ -109,6 +109,7 @@
     <li><a href="#"><i class="fa fa-home fa-fw"></i> {{ 'Status:' |trans }} {{ tool.status }}</a></li>
     {% if app.session.get('user').id == tool.user_id %}
         <li><a href="#" onclick="document.forms['editToolForm'].submit();"><i class="fa fa-save fa-fw"></i> {{ 'Save' |trans }}</a></li>
+        <li><a href="{{ path('admin.tool.overview') }}"><i class="fa fa-times fa-fw"></i> {{ 'Cancel' |trans }}</a></li>
         <li><a href="{{ path('admin.tool.delete', { 'toolId': tool.id}) }}"><i class="fa fa-lock fa-fw"></i> {{ 'Delete' |trans }}</a></li>
     {% endif %}
 {% endblock %}
