@@ -84,16 +84,20 @@ class Tools extends Repository {
 
             }
         }
+        // $queryBuilder->andWhere(                );
+
         // keys
-        for($i=0; $i < sizeof($tags); $i++){
-            $queryBuilder->andWhere(
-                $queryBuilder->expr()->orx(
+        $tagquery = '';
+        $length = sizeof($tags);
+        for($i=0; $i < $length; $i++){
+                $tagquery .= $queryBuilder->expr()->orx(
                     $queryBuilder->expr()->like('k.key', $queryBuilder->expr()->literal('%' . $tags[$i] . '%')),
                     $queryBuilder->expr()->like('t.title', $queryBuilder->expr()->literal('%' . $tags[$i] . '%'))
-                )
-            );
+                );
+            if ($i != $length-1)$tagquery .= ' OR ';
 
         }
+        $queryBuilder->andWhere($tagquery);
 
         $resultSet = $this->db->fetchAll($queryBuilder->getSql( ) );
         if($params){

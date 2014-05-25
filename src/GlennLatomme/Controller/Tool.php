@@ -33,7 +33,6 @@ class Tool implements ControllerProviderInterface {
         $by = $app['db.users']->find($tool['user_id']);
         $tags = $app['db.keywords']->findKeywords($tool['id']);
         $similar = $app['db.tools']->search(array_map('current', $tags),['userId' => $user['id'], 'exclude' => $toolId]);
-
         $images = null;
 
         foreach(glob($app['rmt.base_path'] . $toolId .DIRECTORY_SEPARATOR. "*.{jpg,JPG,jpeg,JPEG,png,PNG}",GLOB_BRACE) as $image) $images[]= basename($image);

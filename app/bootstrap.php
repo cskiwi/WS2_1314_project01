@@ -28,7 +28,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver'    => 'pdo_mysql',
         'host'      => 'localhost',
-        'dbname'    => 'r0359502_PW',
+        'dbname'    => 'r0359502_pw',
         'user'      => 'r0359502_Student',
         'password'  => 'Azerty123',
         'charset'   => 'utf8',//*/

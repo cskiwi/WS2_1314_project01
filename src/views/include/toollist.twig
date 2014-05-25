@@ -8,7 +8,7 @@
                 <img src="http://placehold.it/100x100" alt="{{ tool.title|striptags }}">
             {% endif %}
             <div class="caption">
-                <h3>{{ tool.title[:20] |striptags}} {% if tool.title|length > 20 %}... {% endif %}</h3>
+                <h3>{{ tool.title[:15] |striptags}} {% if tool.title|length > 15 %}... {% endif %}</h3>
                 <p>Status: {{ tool.status  }}</p>
                 <p>Price:
                     {% if tool.price %}

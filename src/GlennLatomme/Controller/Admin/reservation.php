@@ -88,7 +88,23 @@ class Reservation implements ControllerProviderInterface {
                                 'user_id'         =>  $user['id'],
                                 'tool_id'         =>  $tool['id']
                             ));
+                            $reservation = $app['db.reservations']->findForUser($app['db.reservations']->lastID(), $tool['user_id']);
+                            if ($app['mails']){
+                                $Tooluser = $app['db.users']->find($tool['user_id']);
 
+                                $message = \Swift_Message::newInstance()
+                                    ->setSubject('Reservation made')
+                                    ->setFrom(array('mailmaster@rmt.be'))
+                                    ->setTo([$Tooluser['email']])
+                                    ->setBody(
+                                        $app['twig']->render(
+                                            'Mail/Reservations/New.twig',
+                                            array('user' => $user, 'reservation' =>$reservation)
+                                        ), 'text/html'
+                                    );
+
+                                $app['mailer']->send($message);
+                            }
                             return $app->redirect($app['url_generator']->generate('index'));
                         }
                     }
